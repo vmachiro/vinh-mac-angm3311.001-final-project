@@ -18,13 +18,11 @@ class House():
     def get_window_height_from_base(self):
         # TODO:
         # If more than one floor: Find lowest point of the house
-        # Place window halfway through the height of the house
         window_placement = self.wall_height/2
         return window_placement
 
     def get_center_of_wall(self):
         center_of_wall = self.house_width/2
-        # how the heck do i align this to the exterior edge of the house. transforms? do we just transform???
         return center_of_wall
     
     def mkhousebody(self):
@@ -66,7 +64,6 @@ class House():
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)
             
-        # Move the front door to the wall
         self.transform_door(xform, door_num=self.number_of_doors)
 
         # If more than one door, place second door
@@ -161,13 +158,6 @@ class House():
         # Create the front door
         housedoor1 = self.mkdoors()
         house_things.append(housedoor1) # Figure out multiple doors later
-        
-        # Create the windows
-        windows_grp = self.mkwindows()
-        house_things.append(windows_grp)
-
-        # Doors and windows are transformed in their methods because the xform would have to be called and defined like a bazillion times
-
         
         # Create the windows
         windows_grp = self.mkwindows()
