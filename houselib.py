@@ -46,16 +46,33 @@ class House():
                                     width = self.window_width,
                                     depth = .5,
                                     name = "window1")
-        
-        self.transform_window(self,xform)
-
         # keep doing this until we hit amount of windows desired
+
+        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)  
+
         if self.number_of_windows > 1:
             window_GRP = []
             window_GRP.append(xform)
             cmds.group(window_GRP, name="windows_GRP", parent="House1_GRP")
 
-    # define the method that makes the house roof
+        self.transform_window(xform)
+
+    def mkdoors(self):
+        print("Making doors...")
+        door_GRP = []        
+        
+        xform, shape = cmds.polyCube(height= self.door_height,
+                                    width = self.door_width,
+                                    depth = .5,
+                                    name = "door1")
+        door_GRP.append(xform)
+        cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
+
+        self.transform_door(xform)
+        # If more than one door, place second door
+        return xform
+
     def mkhouseflatroof(self):
         print("Making the house's flat roof!")
         # This is a separate method so that the user can choose not to have a roof in the menu
@@ -85,21 +102,6 @@ class House():
         # This doesn't need to check if there's no roof because that'll be checked in the build function
         # This is the same thing as flat roof, but diff poly
     
-    def mkdoors(self):
-        print("Making doors...")
-        door_GRP = []        
-        
-        xform, shape = cmds.polyCube(height= self.door_height,
-                                    width = self.door_width,
-                                    depth = .5,
-                                    name = "door1")
-        door_GRP.append(xform)
-
-        self.transform_door(self, xform)
-        
-        cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
-
-        # If more than one door, place second door
 
     def transform_door(self, door):
         print("Transforming door...")
@@ -109,10 +111,10 @@ class House():
 
         cmds.xform(door, translation=pos)
         
-        for door_num in range(self.number_of_doors):
+        """for door_num in range(self.number_of_doors):
             cmds.xform(door, translation=pos)
             cmds.select(door)
-            cmds.rotate( 0, '90deg', 0, r=True )
+            cmds.rotate( 0, '90deg', 0, r=True )"""
 
     def transform_window(self, window):
         # TODO:
@@ -121,13 +123,13 @@ class House():
 
         y_pos = self.get_window_height_from_base()
 
-        pos = [self.house_width, y_pos, 0]
+        pos = [0, y_pos, 0]
         cmds.xform(window, translation=pos)
 
-        for window_num in range(self.number_of_windows):
+        """for window_num in range(self.number_of_windows):
             cmds.xform(window_num, translation=pos)
             cmds.select('window1')
-            cmds.rotate( 0, '90deg', 0, r=True )
+            cmds.rotate( 0, '90deg', 0, r=True )"""
 
     def build(self):
 
@@ -142,15 +144,18 @@ class House():
             houseroof = self.mkhouseflatroof()
             house_things.append(houseroof)
 
+        
         cmds.group(house_things, name="House1_GRP") 
-    
-        # Windows and doors are made after the HouseGRP because we declare parent when their groups are made
-
+        
         doors_grp = self.mkdoors()
         house_things.append(doors_grp) 
         
         windows_grp = self.mkwindows()
         house_things.append(windows_grp)
+
+    
+        # Windows and doors are made after the HouseGRP because we declare parent when their groups are made
+
      
     
 if __name__ == "__main__":
