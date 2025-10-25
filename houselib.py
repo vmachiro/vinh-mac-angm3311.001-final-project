@@ -11,7 +11,7 @@ class House():
         self.number_of_windows = 4
         self.window_height = 2
         self.window_width = 2
-        self.number_of_doors = 1 
+        self.number_of_doors = 2 
         self.door_height = 2
         self.door_width = 1
     
@@ -32,8 +32,10 @@ class House():
                                     depth = self.house_width,
                                     name = "housebody")
         
+        cmds.xform(xform, translation = [0,self.wall_height/2,0])          
+
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)
+                          scale=True, normal=False, preserveNormals=True)   
         
         return xform
 
@@ -46,27 +48,37 @@ class House():
                                     depth = .5,
                                     name = "window1")
         
-        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)        
-        
         # keep doing this until we hit amount of windows desired
+        if self.number_of_windows > 1:
+            window_GRP = []
+            window_GRP.append(xform)
+            cmds.group(window_GRP, name="windows_GRP", parent="House1_GRP")
+
         
         # in the mind of scope, there's probably not gonna be a window sill/frame thing for now
+        return xform
 
-    def mkdoors(self):
+    def mkdoors(self, door_num):
         print("Making doors...")
         
         xform, shape = cmds.polyCube(height= self.door_height,
                                     width = self.door_width,
-                                    depth = 1,
+                                    depth = .5,
                                     name = "door1")
-        
-        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)
             
         self.transform_door(xform, door_num=self.number_of_doors)
+        
+        """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)"""
+        
+        if self.number_of_doors > 1:
+            door_GRP = []
+            door_GRP.append(xform)
+            cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
 
+        
         # If more than one door, place second door
+
 
         return xform
 
@@ -75,11 +87,14 @@ class House():
 
         x_pos = self.get_center_of_wall()
         # figure out how to . find the wall...
-
         pos = [x_pos, 0, 0]
 
         # do this until all doors have been moved
         cmds.xform(door, translation=pos)
+        cmds.select('door1')
+        cmds.rotate( 0, '90deg', 0, r=True )
+
+
 
     def transform_window(self, window, window_num):
         # TODO:
@@ -145,8 +160,6 @@ class House():
         # TODO:
         house_things = []
 
-        house_things = []
-
         housebody = self.mkhousebody()
         house_things.append(housebody)
 
@@ -155,18 +168,18 @@ class House():
             # Create the roof (set to flatroof for now bc easier)
             houseroof = self.mkhouseflatroof()
             house_things.append(houseroof)
-        # Create the front door
-        housedoor1 = self.mkdoors()
-        house_things.append(housedoor1) # Figure out multiple doors later
+
+        cmds.group(house_things, name="House1_GRP") 
+    
+        doors_grp = self.mkdoors()
+        house_things.append(doors_grp) 
         
-        # Create the windows
+        # Windows are made after the HouseGRP because we declare parent when windows group is made
         windows_grp = self.mkwindows()
         house_things.append(windows_grp)
 
         # Doors and windows are transformed in their methods because the xform would have to be called and defined like a bazillion times
 
-        cmds.group(house_things, name="House1") 
-        
         pass     
     
 if __name__ == "__main__":
