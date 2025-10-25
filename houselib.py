@@ -11,14 +11,18 @@ class House():
         self.number_of_windows = 4
         self.window_height = 2
         self.window_width = 2
-        self.number_of_doors = 2 
+        self.number_of_doors = 1
         self.door_height = 2
         self.door_width = 1
     
+    def get_height_of_house(self):
+        house_height = self.wall_height * self.number_of_floors
+        return house_height
+
     def get_window_height_from_base(self):
         # TODO:
         # If more than one floor: Find lowest point of the house
-        window_placement = self.wall_height/2
+        window_placement = self.get_height_of_house() + self.wall_height/2
         return window_placement
 
     def get_center_of_wall(self):
@@ -27,7 +31,7 @@ class House():
     
     def mkhousebody(self):
         print("Making your house!")
-        xform, shape = cmds.polyCube(height= self.wall_height * self.number_of_floors,
+        xform, shape = cmds.polyCube(height= self.get_height_of_house(),
                                     width = self.house_width,
                                     depth = self.house_width,
                                     name = "housebody")
@@ -48,6 +52,7 @@ class House():
                                         width = self.window_width,
                                         depth = .5,
                                         name = "window1")
+            self.transform_window(xform)            
             window_GRP.append(xform)
 
         cmds.group(window_GRP, name="windows_GRP", parent="House1_GRP")
@@ -55,7 +60,7 @@ class House():
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)  
 
-        self.transform_window(xform)
+
 
     def mkdoors(self):
         print("Making doors...")
@@ -66,11 +71,16 @@ class House():
                                         width = self.door_width,
                                         depth = .5,
                                         name = "door1")
-            door_GRP.append(xform)
-        cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
+            
+            self.transform_door(xform)
 
-        self.transform_door(xform)
-        # If more than one door, place second door
+            cmds.select(xform)
+            cmds.rotate( 0, '90deg', 0, r=True )
+
+            door_GRP.append(xform)
+
+        cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
+        
         return xform
 
     def mkhouseflatroof(self):
@@ -106,14 +116,9 @@ class House():
         print("Transforming door...")
 
         x_pos = self.get_center_of_wall()
-        pos = [x_pos, 0, 0]
+        pos = [x_pos, self.get_window_height_from_base(), 0]
 
         cmds.xform(door, translation=pos)
-        
-        for door_num in range(self.number_of_doors):
-            cmds.xform(door, translation=pos)
-            cmds.select(door)
-            cmds.rotate( 0, '90deg', 0, r=True )
 
     def transform_window(self, window):
         # TODO:
@@ -124,11 +129,6 @@ class House():
 
         pos = [0, y_pos, 0]
         cmds.xform(window, translation=pos)
-
-        """for window_num in range(self.number_of_windows):
-            cmds.xform(window_num, translation=pos)
-            cmds.select('window1')
-            cmds.rotate( 0, '90deg', 0, r=True )"""
 
     def build(self):
 
