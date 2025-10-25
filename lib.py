@@ -46,6 +46,7 @@ class House():
                                     width = self.window_width,
                                     depth = .5,
                                     name = "window1")
+        
         # keep doing this until we hit amount of windows desired
         
         # in the mind of scope, there's probably not gonna be a window sill/frame thing for now
@@ -89,6 +90,10 @@ class House():
         # figure out how to . find the wall...
 
         pos = [0, y_pos, 0]
+
+        # TURN THE WINDOW. ROTATE THE WINDOW! I FORGOT
+        # window rotation will be based on which wall. 30-60-90
+
         cmds.xform(window, translation=pos)
         
         # Keep doing this for all of the windows...
