@@ -28,9 +28,7 @@ class House():
     # define the method that makes the house body
     def mkhousebody(self):
         print("Making your house!")
-        # TODO:
-        # Use polycube to make the main body based on wall_height and number_of_floors
-        xform, shape = cmds.polyCube(height= self.wall_height,
+        xform, shape = cmds.polyCube(height= self.wall_height * self.number_of_floors,
                                     width = self.house_width,
                                     depth = self.wall_height/self.house_width,
                                     name = "housebody")
@@ -48,8 +46,15 @@ class House():
 
     def mkdoors(self):
         print("Making doors...")
-        # TODO:
-        # Make cube based on door_height and door_width
+        
+        xform, shape = cmds.polyCube(height= self.door_height,
+                                    width = self.door_width,
+                                    depth = 1,
+                                    name = "door1")
+        
+        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)
+        return xform
         # Number_of_doors won't be used here, it'll be used for populating the house in the build method. 
         # Specifying the different object kinds of doors will suck big bad and may cause problems later
 
