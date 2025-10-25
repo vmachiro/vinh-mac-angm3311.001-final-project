@@ -94,7 +94,7 @@ class House():
                                     depth = .5,
                                     name = "door1")
         door_GRP.append(xform)
-        
+
         self.transform_door(self, xform)
         
         cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
@@ -109,7 +109,7 @@ class House():
 
         cmds.xform(door, translation=pos)
         
-        for door_num in range(door_num):
+        for door_num in range(self.number_of_doors):
             cmds.xform(door, translation=pos)
             cmds.select(door)
             cmds.rotate( 0, '90deg', 0, r=True )
