@@ -21,14 +21,8 @@ class House():
         # Place window halfway through the height of the house
         window_placement = self.wall_height/2
         return window_placement
-        window_placement = self.wall_height/2
-        return window_placement
 
     def get_center_of_wall(self):
-        center_of_wall = self.house_width/2
-        # how the heck do i align this to the exterior edge of the house. transforms? do we just transform???
-        return center_of_wall
-    
         center_of_wall = self.house_width/2
         # how the heck do i align this to the exterior edge of the house. transforms? do we just transform???
         return center_of_wall
@@ -59,13 +53,6 @@ class House():
         
         # keep doing this until we hit amount of windows desired
         
-        xform, shape = cmds.polyCube(height= self.window_height,
-                                    width = self.window_width,
-                                    depth = .5,
-                                    name = "window1")
-        
-        # keep doing this until we hit amount of windows desired
-        
         # in the mind of scope, there's probably not gonna be a window sill/frame thing for now
 
     def mkdoors(self):
@@ -84,12 +71,6 @@ class House():
 
         # If more than one door, place second door
 
-            
-        # Move the front door to the wall
-        self.transform_door(xform, door_num=self.number_of_doors)
-
-        # If more than one door, place second door
-
         return xform
 
     def transform_door(self, door, door_num):
@@ -120,7 +101,6 @@ class House():
         cmds.xform(window, translation=pos)
         
         # Keep doing this for all of the windows...
-    
 
     def transform_door(self, door, door_num):
         print("Transforming door...")
@@ -133,24 +113,6 @@ class House():
         # do this until all doors have been moved
         cmds.xform(door, translation=pos)
 
-    def transform_window(self, window, window_num):
-        # TODO:
-        # Take the distance from base for window height placement
-        # Find the exterior wall. ANY OF THEM. Maybe by scaling the placement until it matches the width of the house???
-        print("Transforming windows...")
-
-        y_pos = self.get_window_height_from_base()
-        # figure out how to . find the wall...
-
-        pos = [0, y_pos, 0]
-
-        # TURN THE WINDOW. ROTATE THE WINDOW! I FORGOT
-        # window rotation will be based on which wall. 30-60-90
-
-        cmds.xform(window, translation=pos)
-        
-        # Keep doing this for all of the windows...
-    
     # define the method that makes the house roof
     def mkhouseflatroof(self):
         print("Making the house's flat roof!")
@@ -167,17 +129,7 @@ class House():
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)
         return xform
-
-        xform, shape = cmds.polyCube(height= self.roof_height/4,
-                                    width = self.house_width*1.25,
-                                    depth = self.house_width*1.25,
-                                    name = "houseflatroof")
-
-        cmds.xform(xform, translation = [0,self.wall_height,0])
-
-        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)
-        return xform
+    
         # No roof_width because we're depending on house body width
         # Tranform the cube according to width of the house to have an overhang.
     
