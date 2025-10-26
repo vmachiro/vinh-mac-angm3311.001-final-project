@@ -11,7 +11,7 @@ class House():
         self.number_of_windows = 4
         self.window_height = 2
         self.window_width = 2
-        self.number_of_doors = 1
+        self.number_of_doors = 2
         self.door_height = 2
         self.door_width = 1
     
@@ -30,10 +30,14 @@ class House():
     def set_pivot_to_house_origin(self,xform):
         print("Setting pivot of the current window...")
 
-        position = cmds.xform('housebody', query=True, translation=True, worldSpace=True)
-        print(f"World Space Position of {'housebody'}: {position}")
+        origin_pos = cmds.xform('housebody', query=True, translation=True, worldSpace=True)
+        print(f"World Space Position of {'housebody'}: {origin_pos}")
+        old_pos = cmds.xform(xform, query=True, translation=True, worldSpace=True)
+        print(f"World Space Position of {xform}: {old_pos}")
 
-        cmds.manipPivot(p=position)
+        cmds.select(xform)
+        cmds.manipPivot(p=origin_pos)
+        print(f"position after moving: {origin_pos}")
 
     def mkhousebody(self):
         print("Making your house!")
@@ -44,8 +48,8 @@ class House():
         
         cmds.xform(xform, translation = [0,self.wall_height/2,0])          
 
-        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)   
+        """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)"""
         
         return xform
 
@@ -59,7 +63,7 @@ class House():
                                         width = self.window_width,
                                         depth = self.door_width/4,
                                         name = "window1")
-            cmds.select(xform)
+            
             self.set_pivot_to_house_origin(xform)
 
             rotation = cmds.xform(xform, query=True, worldSpace=True, translation=True)
@@ -70,8 +74,7 @@ class House():
 
             window_GRP.append(xform)
 
-        cmds.group(window_GRP, name="windows_GRP", parent="House1_GRP")
-
+        cmds.group(window_GRP, name="windows_GRP", parent="House1")
 
     def mkdoors(self):
         print("Making doors...")
@@ -84,13 +87,15 @@ class House():
                                         name = "door1")
             
             self.transform_door(xform)
-
+            if door_num > 1:
+                self.transform_back_door(xform)
+            
             door_GRP.append(xform)
             
             cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)   
 
-        cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
+        cmds.group(door_GRP, name="doors_GRP", parent="House1")
         
         return xform
 
@@ -118,6 +123,15 @@ class House():
 
         cmds.xform(door, translation=pos)
 
+    def transform_back_door(self, door):
+        print("Transforming door...")
+
+        z_pos = self.get_center_of_wall()*-1
+        y_pos = self.wall_height/self.get_height_of_house()
+        pos = [0, y_pos, z_pos]
+
+        cmds.xform(door, translation=pos)
+
     def transform_window(self, window):
         print("Transforming windows...")
 
@@ -126,7 +140,6 @@ class House():
 
         pos = [0, y_pos, z_pos]
         cmds.xform(window, translation=pos)
-
 
     def build(self):
 
@@ -141,7 +154,7 @@ class House():
             houseroof = self.mkhouseflatroof()
             house_things.append(houseroof)
 
-        cmds.group(house_things, name="House1_GRP") 
+        cmds.group(house_things, name="House1") 
         
         # Windows and doors are made after the HouseGRP because we declare parent when their groups are made
 
@@ -150,6 +163,10 @@ class House():
         
         windows_grp = self.mkwindows()
         house_things.append(windows_grp)
+
+        """cmds.makeIdentity("House1", apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)   """
+
      
     
 if __name__ == "__main__":
