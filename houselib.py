@@ -7,7 +7,7 @@ class House():
         self.number_of_floors = 2        
         self.wall_height = 8 
         self.house_width = 8
-        self.roof_height = 4 
+        self.roof_height = 1 
         self.number_of_windows = 4
         self.window_height = 2
         self.window_width = 2
@@ -59,7 +59,7 @@ class House():
         for windows_num in range(self.number_of_windows):
             xform, shape = cmds.polyCube(height= self.window_height,
                                         width = self.window_width,
-                                        depth = self.door_width/4,
+                                        depth = self.window_width/4,
                                         name = "window1")
             
             self.set_pivot_to_house_origin(xform)
@@ -102,7 +102,7 @@ class House():
         print("Making the house's flat roof!")
         # This doesn't need to check if there's no roof because that'll be checked in the build function
 
-        xform, shape = cmds.polyCube(height= self.roof_height/4,
+        xform, shape = cmds.polyCube(height= self.roof_height,
                                     width = self.house_width*1.25,
                                     depth = self.house_width*1.25,
                                     name = "houseflatroof")
