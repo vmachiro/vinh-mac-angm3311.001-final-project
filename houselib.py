@@ -31,6 +31,7 @@ class House():
         # TODO:
         # find the center of the curent house object
         # move pivot to that point
+
         cmds.manipPivot(p=(0, 0, 0))
 
     def mkhousebody(self):
@@ -58,16 +59,14 @@ class House():
                                         name = "window1")
             self.transform_window(xform)        
 
-            """cmds.select(xform)
+            cmds.select(xform)
             self.set_pivot_to_house_origin()
-            cmds.rotate( 0, '90deg', 0, r=True )    """
+            cmds.rotate( 0, '90deg', 0, r=True )    
 
             window_GRP.append(xform)
 
         cmds.group(window_GRP, name="windows_GRP", parent="House1_GRP")
-        
-        """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)  """
+
 
     def mkdoors(self):
         print("Making doors...")
@@ -81,9 +80,6 @@ class House():
             
             self.transform_door(xform)
 
-            """cmds.select(xform)
-            cmds.rotate( 0, '90deg', 0, r=True )"""
-
             door_GRP.append(xform)
             
             cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
@@ -95,7 +91,6 @@ class House():
 
     def mkhouseflatroof(self):
         print("Making the house's flat roof!")
-        # This is a separate method so that the user can choose not to have a roof in the menu
         # This doesn't need to check if there's no roof because that'll be checked in the build function
 
         xform, shape = cmds.polyCube(height= self.roof_height/4,
@@ -108,19 +103,6 @@ class House():
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)
         return xform
-    
-        # No roof_width because we're depending on house body width
-        # Tranform the cube according to width of the house to have an overhang.
-    
-    def mkhousetriangleroof(self):
-        print("Making the house's pointy roof!")
-        
-        # This is a separate method so that the user can choose not to have a roof in the menu
-        # This should have options whether to be triangular or flat roof
-        
-        # TODO:
-        # This doesn't need to check if there's no roof because that'll be checked in the build function
-        # This is the same thing as flat roof, but diff poly
     
     def transform_door(self, door):
         print("Transforming door...")
