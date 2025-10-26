@@ -20,8 +20,6 @@ class House():
         return house_height
 
     def get_window_height_from_base(self):
-        # TODO:
-        # If more than one floor: Find lowest point of the house
         window_placement = self.wall_height/self.get_height_of_house() + (self.wall_height/2)
         return window_placement
 
@@ -50,7 +48,7 @@ class House():
         for windows_num in range(self.number_of_windows):
             xform, shape = cmds.polyCube(height= self.window_height,
                                         width = self.window_width,
-                                        depth = .5,
+                                        depth = self.door_width/4,
                                         name = "window1")
             self.transform_window(xform)        
 
@@ -80,6 +78,9 @@ class House():
             cmds.rotate( 0, '90deg', 0, r=True )
 
             door_GRP.append(xform)
+            
+            cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)   
 
         cmds.group(door_GRP, name="doors_GRP", parent="House1_GRP")
         
@@ -124,8 +125,6 @@ class House():
         cmds.xform(door, translation=pos)
 
     def transform_window(self, window):
-        # TODO:
-        # Take the distance from base for window height placement
         print("Transforming windows...")
 
         x_pos = self.get_center_of_wall()
