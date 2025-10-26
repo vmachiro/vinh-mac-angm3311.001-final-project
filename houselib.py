@@ -30,18 +30,6 @@ class House():
         # This depends on the depth of the house body being equal to the width
         return center_of_wall
     
-    def set_pivot_to_house_origin(self,xform):
-        print("Setting pivot of the current window...")
-
-        origin_pos = cmds.xform('housebody1', query=True, translation=True, worldSpace=True)
-        print(f"World Space Position of {'housebody1'}: {origin_pos}")
-        old_pos = cmds.xform(xform, query=True, translation=True, worldSpace=True)
-        print(f"World Space Position of {xform}: {old_pos}")
-
-        cmds.select(xform)
-        cmds.manipPivot(p=origin_pos)
-        print(f"position after moving: {origin_pos}")
-
     def mkhousebody(self):
         print("Making your house!")
         xform, shape = cmds.polyCube(height= self.get_height_of_house(),
@@ -67,7 +55,7 @@ class House():
                                         depth = self.window_width/4,
                                         name = "window1")
             
-            self.set_pivot_to_house_origin(xform)
+            
 
             rotation = cmds.xform(xform, query=True, worldSpace=True, translation=True)
             is_flipped = windows_num%2
