@@ -22,7 +22,7 @@ class House():
     def get_window_height_from_base(self):
         # TODO:
         # If more than one floor: Find lowest point of the house
-        window_placement = self.get_height_of_house() + self.wall_height/2
+        window_placement = self.wall_height/self.get_height_of_house() + (self.wall_height/2)
         return window_placement
 
     def get_center_of_wall(self):
@@ -52,15 +52,17 @@ class House():
                                         width = self.window_width,
                                         depth = .5,
                                         name = "window1")
-            self.transform_window(xform)            
+            self.transform_window(xform)        
+
+            cmds.select(xform)
+            cmds.rotate( 0, '90deg', 0, r=True )    
+
             window_GRP.append(xform)
 
         cmds.group(window_GRP, name="windows_GRP", parent="House1_GRP")
         
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)  
-
-
 
     def mkdoors(self):
         print("Making doors...")
@@ -116,7 +118,8 @@ class House():
         print("Transforming door...")
 
         x_pos = self.get_center_of_wall()
-        pos = [x_pos, self.get_window_height_from_base(), 0]
+        y_pos = self.wall_height/self.get_height_of_house()
+        pos = [x_pos, y_pos, 0]
 
         cmds.xform(door, translation=pos)
 
@@ -125,10 +128,12 @@ class House():
         # Take the distance from base for window height placement
         print("Transforming windows...")
 
+        x_pos = self.get_center_of_wall()
         y_pos = self.get_window_height_from_base()
 
-        pos = [0, y_pos, 0]
+        pos = [x_pos, y_pos, 0]
         cmds.xform(window, translation=pos)
+
 
     def build(self):
 
@@ -143,18 +148,15 @@ class House():
             houseroof = self.mkhouseflatroof()
             house_things.append(houseroof)
 
-        
         cmds.group(house_things, name="House1_GRP") 
         
+        # Windows and doors are made after the HouseGRP because we declare parent when their groups are made
+
         doors_grp = self.mkdoors()
         house_things.append(doors_grp) 
         
         windows_grp = self.mkwindows()
         house_things.append(windows_grp)
-
-    
-        # Windows and doors are made after the HouseGRP because we declare parent when their groups are made
-
      
     
 if __name__ == "__main__":
