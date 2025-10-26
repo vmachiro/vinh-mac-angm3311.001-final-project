@@ -52,6 +52,7 @@ class House():
     def mkwindows(self):
         print("Making windows...")
         window_GRP = []
+        degrees = [0,90]
 
         for windows_num in range(self.number_of_windows):
             xform, shape = cmds.polyCube(height= self.window_height,
@@ -61,10 +62,9 @@ class House():
             cmds.select(xform)
             self.set_pivot_to_house_origin(xform)
 
-            last_rotation = cmds.xform(xform, query=True, worldSpace=True, translation=True)
-            last_rotation[1] = last_rotation[1] + 90            
-            cmds.xform( r=True, ro=(last_rotation) )
-            print(f"here's the last rotation:{last_rotation}")
+            rotation = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+            rotation[1] = degrees[windows_num%2]
+            cmds.xform( r=True, ro=(rotation) )
 
             self.transform_window(xform)        
 
