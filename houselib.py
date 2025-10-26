@@ -4,7 +4,7 @@ import maya.cmds as cmds
 class House():
 
     def __init__(self):
-        self.number_of_floors = 1        
+        self.number_of_floors = 2        
         self.wall_height = 8 
         self.house_width = 8
         self.roof_height = 4 
@@ -12,8 +12,6 @@ class House():
         self.window_height = 2
         self.window_width = 2
         self.number_of_doors = 2
-        self.door_height = 2
-        self.door_width = 1
     
     def get_height_of_house(self):
         house_height = self.wall_height * self.number_of_floors
@@ -42,11 +40,11 @@ class House():
     def mkhousebody(self):
         print("Making your house!")
         xform, shape = cmds.polyCube(height= self.get_height_of_house(),
-                                    width = self.house_width,
+                                    width = self.number_of_windows+2,
                                     depth = self.house_width,
                                     name = "housebody")
         
-        cmds.xform(xform, translation = [0,self.wall_height/2,0])          
+        cmds.xform(xform, translation = [0,self.get_height_of_house()/2,0])          
 
         """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)"""
@@ -81,8 +79,8 @@ class House():
         door_GRP = []        
         
         for door_num in range(self.number_of_doors):
-            xform, shape = cmds.polyCube(height= self.door_height,
-                                        width = self.door_width,
+            xform, shape = cmds.polyCube(height= self.wall_height/4,
+                                        width = self.house_width/10,
                                         depth = .5,
                                         name = "door1")
             
@@ -109,7 +107,7 @@ class House():
                                     depth = self.house_width*1.25,
                                     name = "houseflatroof")
 
-        cmds.xform(xform, translation = [0,self.wall_height,0])
+        cmds.xform(xform, translation = [0,self.get_height_of_house(),0])
 
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)
