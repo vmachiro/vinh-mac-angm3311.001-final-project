@@ -7,7 +7,7 @@ class House():
         self.number_of_floors = 2        
         self.wall_height = 8 
         self.house_width = 8
-        self.roof_height = 1 
+        self.roof_height = 4 
         self.number_of_windows = 4
         self.window_height = 2
         self.window_width = 2
@@ -65,10 +65,11 @@ class House():
             self.set_pivot_to_house_origin(xform)
 
             rotation = cmds.xform(xform, query=True, worldSpace=True, translation=True)
-            rotation[1] = degrees[windows_num%2]
+            is_flipped = windows_num%2
+            rotation[1] = degrees[is_flipped]
             cmds.xform( r=True, ro=(rotation) )
 
-            self.transform_window(xform)        
+            self.transform_window(xform, is_flipped)
 
             window_GRP.append(xform)
 
@@ -87,7 +88,7 @@ class House():
             self.transform_door(xform)
             
             if door_num > 0:
-                self.transform_back_door(xform)
+                self.transform_door_to_back(xform)
             
             door_GRP.append(xform)
             
@@ -122,22 +123,23 @@ class House():
 
         cmds.xform(door, translation=pos)
 
-    def transform_back_door(self, door):
-        print("Transforming back door...")
-
+    def transform_door_to_back(self, xform):
         z_pos = self.get_center_of_wall()
         y_pos = self.wall_height/self.get_height_of_house()
         pos = [0, y_pos, z_pos*-1]
 
-        cmds.xform(door, translation=pos)
+        cmds.xform(xform, translation=pos)
 
-    def transform_window(self, window):
+    def transform_window(self, window, is_flipped):
         print("Transforming windows...")
 
         z_pos = self.get_center_of_wall()
         y_pos = self.get_window_height_from_base()
 
         pos = [0, y_pos, z_pos]
+        if is_flipped == True:
+            pos = [z_pos, y_pos, 0]
+
         cmds.xform(window, translation=pos)
 
     def build(self):
