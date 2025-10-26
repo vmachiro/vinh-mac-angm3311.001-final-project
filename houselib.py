@@ -87,7 +87,8 @@ class House():
                                         name = "door1")
             
             self.transform_door(xform)
-            if door_num > 1:
+            
+            if door_num > 0:
                 self.transform_back_door(xform)
             
             door_GRP.append(xform)
@@ -124,11 +125,11 @@ class House():
         cmds.xform(door, translation=pos)
 
     def transform_back_door(self, door):
-        print("Transforming door...")
+        print("Transforming back door...")
 
-        z_pos = self.get_center_of_wall()*-1
+        z_pos = self.get_center_of_wall()
         y_pos = self.wall_height/self.get_height_of_house()
-        pos = [0, y_pos, z_pos]
+        pos = [0, y_pos, z_pos*-1]
 
         cmds.xform(door, translation=pos)
 
