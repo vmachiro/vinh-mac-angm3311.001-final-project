@@ -58,15 +58,16 @@ class House():
                                         name = "window1")
             self.transform_window(xform)        
 
-            cmds.select(xform)
-            cmds.rotate( 0, '90deg', 0, r=True )    
+            """cmds.select(xform)
+            self.set_pivot_to_house_origin()
+            cmds.rotate( 0, '90deg', 0, r=True )    """
 
             window_GRP.append(xform)
 
         cmds.group(window_GRP, name="windows_GRP", parent="House1_GRP")
         
-        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)  
+        """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)  """
 
     def mkdoors(self):
         print("Making doors...")
@@ -80,8 +81,8 @@ class House():
             
             self.transform_door(xform)
 
-            cmds.select(xform)
-            cmds.rotate( 0, '90deg', 0, r=True )
+            """cmds.select(xform)
+            cmds.rotate( 0, '90deg', 0, r=True )"""
 
             door_GRP.append(xform)
             
@@ -124,19 +125,19 @@ class House():
     def transform_door(self, door):
         print("Transforming door...")
 
-        x_pos = self.get_center_of_wall()
+        z_pos = self.get_center_of_wall()
         y_pos = self.wall_height/self.get_height_of_house()
-        pos = [x_pos, y_pos, 0]
+        pos = [0, y_pos, z_pos]
 
         cmds.xform(door, translation=pos)
 
     def transform_window(self, window):
         print("Transforming windows...")
 
-        x_pos = self.get_center_of_wall()
+        z_pos = self.get_center_of_wall()
         y_pos = self.get_window_height_from_base()
 
-        pos = [x_pos, y_pos, 0]
+        pos = [0, y_pos, z_pos]
         cmds.xform(window, translation=pos)
 
 
