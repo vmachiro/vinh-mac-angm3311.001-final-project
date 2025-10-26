@@ -27,6 +27,12 @@ class House():
         center_of_wall = self.house_width/2
         return center_of_wall
     
+    def set_pivot_to_house_origin(self):
+        # TODO:
+        # find the center of the curent house object
+        # move pivot to that point
+        cmds.manipPivot(p=(0, 0, 0))
+
     def mkhousebody(self):
         print("Making your house!")
         xform, shape = cmds.polyCube(height= self.get_height_of_house(),
