@@ -27,12 +27,13 @@ class House():
         center_of_wall = self.house_width/2
         return center_of_wall
     
-    def set_pivot_to_house_origin(self):
-        # TODO:
-        # find the center of the curent house object
-        # move pivot to that point
+    def set_pivot_to_house_origin(self,xform):
+        print("Setting pivot of the current window...")
 
-        cmds.manipPivot(p=(0, 0, 0))
+        position = cmds.xform('housebody', query=True, translation=True, worldSpace=True)
+        print(f"World Space Position of {'housebody'}: {position}")
+
+        cmds.manipPivot(p=position)
 
     def mkhousebody(self):
         print("Making your house!")
@@ -57,11 +58,15 @@ class House():
                                         width = self.window_width,
                                         depth = self.door_width/4,
                                         name = "window1")
-            self.transform_window(xform)        
-
             cmds.select(xform)
-            self.set_pivot_to_house_origin()
-            cmds.rotate( 0, '90deg', 0, r=True )    
+            self.set_pivot_to_house_origin(xform)
+
+            last_rotation = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+            last_rotation[1] = last_rotation[1] + 90            
+            cmds.xform( r=True, ro=(last_rotation) )
+            print(f"here's the last rotation:{last_rotation}")
+
+            self.transform_window(xform)        
 
             window_GRP.append(xform)
 
