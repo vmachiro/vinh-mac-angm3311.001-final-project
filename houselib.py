@@ -1,6 +1,5 @@
 import maya.cmds as cmds
 
-# house model is specifically for environment bg population, not for interior map level exploration, so there will not be multiple walls or a floor
 class House():
 
     def __init__(self):
@@ -54,16 +53,19 @@ class House():
                                         width = self.window_width,
                                         depth = self.window_width/4,
                                         name = "window1")
-            
-            
 
-            rotation = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+            world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+
             is_flipped = windows_num%2
-            rotation[1] = degrees[is_flipped]
-            cmds.xform( r=True, ro=(rotation) )
+            world_pos[1] = degrees[is_flipped]
+            cmds.xform( r=True, ro=(world_pos) )
 
             self.transform_window(xform, is_flipped)
 
+            if windows_num > 0:
+                if is_flipped == False:
+                    self.transform_window_to_back(xform, is_flipped)
+            
             window_GRP.append(xform)
 
         cmds.group(window_GRP, name="windows_GRP", parent="House1")
@@ -132,6 +134,16 @@ class House():
         pos = [0, y_pos, z_pos]
         if is_flipped == True:
             pos = [z_pos, y_pos, 0]
+
+        cmds.xform(window, translation=pos)
+
+    def transform_window_to_back(self, window, is_flipped):
+        print("Transforming windows to back...")
+
+        z_pos = self.get_center_of_wall()
+        y_pos = self.get_window_height_from_base()
+
+        pos = [0, y_pos, z_pos*-1]
 
         cmds.xform(window, translation=pos)
 
