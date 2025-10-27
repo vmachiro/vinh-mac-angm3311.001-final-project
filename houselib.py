@@ -53,33 +53,35 @@ class House():
 
     def mkwindows(self):
         print("Making windows...")
-        window_GRP = []
         floor_num=1
 
-        for windows_num in range(self.number_of_windows):
-            xform, shape = cmds.polyCube(height= self.window_height,
-                                        width = self.window_width,
-                                        depth = self.window_width/4,
-                                        name = "window1")
-
-            window_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
-            self.transform_window(xform)
-
-            window_GRP.append(xform)
 
         for floor_num in range(self.number_of_floors):
             # TODO:
             # Move the windows up by a floor for every 2 windows.
+            window_GRP = []
 
-            if windows_num > 1:
+            for windows_num in range(self.number_of_windows):
+                xform, shape = cmds.polyCube(height= self.window_height,
+                                        width = self.window_width,
+                                        depth = self.window_width/4,
+                                        name = "window1")
+
+                window_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+                
+                self.transform_window(xform)
                 self.transform_window_up(xform, window_pos[1], floor_num)
-
+                
                 # Move the window to the back of the building every other window.
-            if windows_num%2 == 1:
-                self.transform_window_to_back(xform, window_pos[2], floor_num)
-                                        
+                if windows_num%2 == 1:
+                    self.transform_window_to_back(xform, window_pos[2], floor_num)
+                
+                window_GRP.append(xform)
+            
+            cmds.group(window_GRP, name="windowsgrp1", parent="House1")
+            window_GRP.clear()
 
-        cmds.group(window_GRP, name="windows_GRP", parent="House1")
+            
 
     def mkdoors(self):
         print("Making doors...")
@@ -153,9 +155,9 @@ class House():
         y_pos = window_y_pos * floor_num
         
         # only changing one axis at a time. so what's a cmd that does that?
-        pos = [0, y_pos, z_pos]
+        # pos = [0, y_pos, z_pos]
 
-        cmds.xform(window, translation=pos)
+        cmds.move( y_pos, y=True )
 
 
     def transform_window_to_back(self, window, window_z_pos, floor_num):
@@ -164,9 +166,9 @@ class House():
         z_pos = window_z_pos
         # y_pos = window_y_pos * floor_num
 
-        pos = [0, y_pos, z_pos*-1]
+        # pos = [0, y_pos, z_pos*-1]
 
-        cmds.xform(window, translation=pos)
+        #cmds.xform(window, translation=pos)
 
     def build(self):
 
