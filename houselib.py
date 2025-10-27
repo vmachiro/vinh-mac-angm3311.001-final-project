@@ -13,8 +13,7 @@ class House():
         self.number_of_doors = 2
     
     def get_height_of_house(self):
-        house_height = self.wall_height * self.number_of_floors
-        return house_height
+        return self.wall_height * self.number_of_floors
 
     def get_base_of_house(self):
         base_height = self.wall_height/self.get_height_of_house() * self.number_of_floors
@@ -25,9 +24,8 @@ class House():
         return window_placement
 
     def get_center_of_wall(self):
-        center_of_wall = self.house_width/2
         # This depends on the depth of the house body being equal to the width
-        return center_of_wall
+        return self.house_width/2
     
     def mkhousebody(self):
         print("Making your house!")

@@ -9,12 +9,10 @@ class Stair():
         self.step_count = 10
         
     def get_step_rise(self):
-        step_rise = self.total_rise/self.step_count
-        return step_rise
+        return self.total_rise/self.step_count
 
     def get_step_run(self):
-        step_run = self.total_run/self.step_count
-        return step_run
+        return self.total_run/self.step_count
 
     def mkstep(self):
         print("Making step...")
@@ -25,7 +23,7 @@ class Stair():
                                     name = "step1")
 
         cmds.xform(xform, translation = [0,self.get_step_rise()/2,0])
-
+        # Freeze transforms so we don't have to care about the half step we did every time this makes another step.
         cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)
         return xform
