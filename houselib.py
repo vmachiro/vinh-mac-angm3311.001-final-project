@@ -7,7 +7,7 @@ class House():
         self.wall_height = 8 
         self.house_width = 8
         self.roof_height = 2 
-        self.number_of_windows = 2
+        self.number_of_windows = 4
         self.window_height = 2
         self.window_width = 2
         self.number_of_doors = 2
@@ -53,35 +53,26 @@ class House():
 
     def mkwindows(self):
         print("Making windows...")
-        floor_num=1
+        window_GRP = []
 
-
-        for floor_num in range(self.number_of_floors):
-            # TODO:
-            # Move the windows up by a floor for every 2 windows.
-            window_GRP = []
-
-            for windows_num in range(self.number_of_windows):
-                xform, shape = cmds.polyCube(height= self.window_height,
+        for windows_num in range(self.number_of_windows):
+            xform, shape = cmds.polyCube(height= self.window_height,
                                         width = self.window_width,
                                         depth = self.window_width/4,
                                         name = "window1")
 
-                window_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
-                
-                self.transform_window(xform)
-                self.transform_window_up(xform, window_pos[1], floor_num)
-                
-                # Move the window to the back of the building every other window.
-                if windows_num%2 == 1:
-                    self.transform_window_to_back(xform, window_pos[2], floor_num)
-                
-                window_GRP.append(xform)
-            
-            cmds.group(window_GRP, name="windowsgrp1", parent="House1")
-            window_GRP.clear()
+            self.transform_window(xform)
+            world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
-            
+            if windows_num%2 == 1:
+                self.transform_window_to_back(xform)
+
+            if windows_num > 1:
+                self.transform_window_up(world_pos[1])            
+                                    
+            window_GRP.append(xform)
+
+        cmds.group(window_GRP, name="windows_GRP", parent="House1")
 
     def mkdoors(self):
         print("Making doors...")
@@ -148,11 +139,10 @@ class House():
 
         cmds.xform(window, translation=pos)
 
-    def transform_window_up(self, window, window_y_pos, floor_num):
+    def transform_window_up(self, window_y_pos):
         print("Moving windows up a floor...")
 
-        # z_pos = self.get_center_of_wall()
-        y_pos = window_y_pos * floor_num
+        y_pos = window_y_pos * self.number_of_floors
         
         # only changing one axis at a time. so what's a cmd that does that?
         # pos = [0, y_pos, z_pos]
@@ -160,15 +150,15 @@ class House():
         cmds.move( y_pos, y=True )
 
 
-    def transform_window_to_back(self, window, window_z_pos, floor_num):
+    def transform_window_to_back(self, window):
         print("Transforming windows to back...")
 
-        z_pos = window_z_pos
-        # y_pos = window_y_pos * floor_num
+        z_pos = self.get_center_of_wall()
+        y_pos = self.get_window_height_from_base()
 
-        # pos = [0, y_pos, z_pos*-1]
+        pos = [0, y_pos, z_pos*-1]
 
-        #cmds.xform(window, translation=pos)
+        cmds.xform(window, translation=pos)
 
     def build(self):
 
@@ -178,7 +168,6 @@ class House():
         house_things.append(housebody)
 
         if self.roof_height != 0:
-            # IF ROOF: Check what kind of roof. (DO THIS LATER)
             houseroof = self.mkhouseflatroof()
             house_things.append(houseroof)
 
