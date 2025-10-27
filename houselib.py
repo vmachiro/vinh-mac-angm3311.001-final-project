@@ -6,7 +6,7 @@ class House():
         self.number_of_floors = 2        
         self.wall_height = 8 
         self.house_width = 8
-        self.roof_height = 2 
+        self.roof_height = 1 
         self.number_of_windows = 4
         self.window_height = 2
         self.window_width = 2
@@ -138,9 +138,9 @@ class House():
 
         z_pos = self.get_center_of_wall()
         y_pos = self.get_window_height_from_base()
-        x_pos = self.house_width/4
+        #x_pos = self.house_width/4
 
-        pos = [x_pos, y_pos, z_pos]
+        pos = [0, y_pos, z_pos]
 
         cmds.xform(window, translation=pos)
 
