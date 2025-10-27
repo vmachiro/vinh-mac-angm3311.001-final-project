@@ -63,10 +63,15 @@ class House():
 
             self.transform_window(xform)
 
-            if windows_num > 1:
-                self.transform_window_up(xform)
-                if windows_num%2 == 0:
+            # TODO:
+            # Move the windows up by a floor for every 2 windows.
+            # Move the window to the back of the building every other window.
+
+            if windows_num > 0:
+                if windows_num%2 == 1:
                     self.transform_window_to_back(xform)
+                    
+                self.transform_window_up(xform)
                 
             window_GRP.append(xform)
 
