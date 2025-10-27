@@ -7,7 +7,7 @@ class House():
         self.wall_height = 8 
         self.house_width = 8
         self.roof_height = 2 
-        self.number_of_windows = 4
+        self.number_of_windows = 2
         self.window_height = 2
         self.window_width = 2
         self.number_of_doors = 2
