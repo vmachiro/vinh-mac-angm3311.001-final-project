@@ -56,15 +56,15 @@ class House():
 
             world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
-            is_flipped = windows_num%2
-            world_pos[1] = degrees[is_flipped]
+            is_rotated = windows_num%2
+            world_pos[1] = degrees[is_rotated]
             cmds.xform( r=True, ro=(world_pos) )
 
-            self.transform_window(xform, is_flipped)
+            self.transform_window(xform, is_rotated)
 
             if windows_num > 0:
-                if is_flipped == False:
-                    self.transform_window_to_back(xform, is_flipped)
+                if is_rotated == False:
+                    self.transform_window(xform, is_rotated)
             
             window_GRP.append(xform)
 
@@ -125,19 +125,19 @@ class House():
 
         cmds.xform(xform, translation=pos)
 
-    def transform_window(self, window, is_flipped):
+    def transform_window(self, window, is_rotated):
         print("Transforming windows...")
 
         z_pos = self.get_center_of_wall()
         y_pos = self.get_window_height_from_base()
 
         pos = [0, y_pos, z_pos]
-        if is_flipped == True:
+        if is_rotated == True:
             pos = [z_pos, y_pos, 0]
 
         cmds.xform(window, translation=pos)
 
-    def transform_window_to_back(self, window, is_flipped):
+    def transform_window_to_back(self, window, is_rotated):
         print("Transforming windows to back...")
 
         z_pos = self.get_center_of_wall()
