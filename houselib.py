@@ -1,4 +1,101 @@
+from PySide2 import QtWidgets, QtCore
+from PySide2.QtCore import Qt
+
+
+import maya.OpenMayaUI as omui
+from shiboken2 import wrapInstance
+
+
 import maya.cmds as cmds
+
+
+def get_maya_main_win():
+    main_win = omui.MQtUtil.mainWindow()
+    return wrapInstance(int(main_win), QtWidgets.QWidget)
+
+class HouseGenWin(QtWidgets.QDialog):
+    """House Window Class"""
+
+    def __init__(self):
+        super().__init__(parent=get_maya_main_win())
+        self.houseGen = House()
+        self.setWindowTitle("House Generator")
+        self.resize(500, 200)
+        self._mk_main_layout()
+        self._connect_signals()
+
+    def _connect_signals(self):
+        self.enable_grp_name_cb.stateChanged.connect(self.toggle_grpname)
+        self.cancel_btn.clicked.connect(self.cancel)
+        self.build_btn.clicked.connect(self.build)
+
+    @QtCore.Slot()
+    def toggle_grpname(self):
+        is_custom_grpname_enabled = self.enable_grp_name_cb.isChecked()
+        self.grp_name_ledit.setDisabled(not is_custom_grpname_enabled)
+
+    @QtCore.Slot()
+    def cancel(self):
+        self.close()
+
+    @QtCore.Slot()
+    def build(self):
+        self._update_housegen_properties()
+        self.housegen.build()
+
+    def _update_housegen_properties(self):
+        self.housegen.__init__() # reset properties to default
+        self.housegen.step_count = self.windows_spnbx.value()
+        self.housegen.wall_height = self.wall_height_dspnbx.value()
+        self.housegen.grp_name = self.grp_name_ledit.text()
+
+    def _mk_main_layout(self):
+        self.main_layout = QtWidgets.QVBoxLayout()
+        self._add_name_label()
+        self._add_form_layout()
+        self._mk_btn_layout()
+        self.setLayout(self.main_layout)
+
+    def _add_form_layout(self):
+        self.form_layout = QtWidgets.QFormLayout()
+        self._add_windows()
+        self._add_wall_height()
+        self._add_custom_grpname()
+        self.main_layout.addLayout(self.form_layout)
+
+    def _add_custom_grpname(self):
+        self.enable_grp_name_cb = QtWidgets.QCheckBox("Enable Custom Group")
+        self.grp_name_ledit = QtWidgets.QLineEdit("stair")
+        self.grp_name_ledit.setDisabled(True)
+        self.form_layout.addRow(self.enable_grp_name_cb)
+        self.form_layout.addRow("Group", self.grp_name_ledit)
+
+    def _add_wall_height(self):
+        self.wall_height_dspnbx = QtWidgets.QDoubleSpinBox()
+        self.wall_height_dspnbx.setValue(1.5)
+        self.wall_height_dspnbx.setSingleStep(0.1)
+        self.form_layout.addRow("Total Rise", self.wall_height_dspnbx)
+
+    def _add_windows(self):
+        self.windows_spnbx = QtWidgets.QSpinBox()
+        self.windows_spnbx.setValue(2)
+        self.form_layout.addRow("windows", self.windows_spnbx)
+
+    def _add_name_label(self):
+        self.name_lbl = QtWidgets.QLabel("House Generator")
+        self.name_lbl.setStyleSheet("background-color: purple;"
+                                    "color: white;"
+                                    "font: bold 24px;")
+        self.name_lbl.setAlignment(Qt.AlignCenter)
+        self.main_layout.addWidget(self.name_lbl)
+
+    def _mk_btn_layout(self):
+        self.btn_layout = QtWidgets.QHBoxLayout()
+        self.build_btn = QtWidgets.QPushButton("Build")
+        self.cancel_btn = QtWidgets.QPushButton("Cancel")
+        self.btn_layout.addWidget(self.build_btn)
+        self.btn_layout.addWidget(self.cancel_btn)
+        self.main_layout.addLayout(self.btn_layout)
 
 class House():
 
