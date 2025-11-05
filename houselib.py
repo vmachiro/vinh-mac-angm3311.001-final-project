@@ -188,10 +188,8 @@ class House():
                     self.transform_window_up(world_pos[1])            
                                         
                 window_GRP.append(xform)
+            return window_GRP
             
-            cmds.group(window_GRP, name="windows_GRP")
-            window_GRP.clear()
-
     def mkdoors(self):
         door_GRP = []        
         
@@ -210,10 +208,8 @@ class House():
             
             cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)   
-
-        #cmds.group(door_GRP, name="doors_GRP")
         
-        return xform
+        return door_GRP
 
     def mkhouseflatroof(self):
         xform, shape = cmds.polyCube(height= self.roof_height,
@@ -274,17 +270,17 @@ class House():
 
         cmds.group(house_things, name=self.housename) 
         
-        # Windows and doors are made after the HouseGRP because we declare parent when their groups are made
-
         doors_grp = self.mkdoors()
         house_things.append(doors_grp) 
         cmds.group(doors_grp, name="doors_GRP", parent=self.housename)
         
         windows_grp = self.mkwindows()
         house_things.append(windows_grp)
+        cmds.group(windows_grp, name="windows_GRP", parent=self.housename)
 
-        """cmds.makeIdentity("House1", apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)   """
+
+        cmds.makeIdentity(self.housename, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)
 
      
     
