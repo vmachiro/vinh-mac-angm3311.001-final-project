@@ -42,6 +42,7 @@ class HouseGenWin(QtWidgets.QDialog):
         self.houseGen.__init__() # reset properties to default
         self.houseGen.wall_height = self.wall_height_spnbx.value()
         self.houseGen.number_of_doors = self.door_spnbox.value()
+        self.houseGen.roof_height = self.roof_height_dspnbox.value()
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -54,7 +55,13 @@ class HouseGenWin(QtWidgets.QDialog):
         self.form_layout = QtWidgets.QFormLayout()
         self._add_wall_height()
         self._add_doors()
+        self._add_roof_height()
         self.main_layout.addLayout(self.form_layout)
+
+    def _add_roof_height(self):
+        self.roof_height_dspnbox = QtWidgets.QDoubleSpinBox()
+        self.roof_height_dspnbox.setValue(1)
+        self.form_layout.addRow("Roof Height", self.roof_height_dspnbox)
 
     def _add_doors(self):
         self.door_spnbox = QtWidgets.QSpinBox()
@@ -69,7 +76,7 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_name_label(self):
         self.name_lbl = QtWidgets.QLabel("House Generator")
-        self.name_lbl.setStyleSheet("background-color: red;"
+        self.name_lbl.setStyleSheet("background-color: purple;"
                                     "color: white;"
                                     "font: bold 24px;")
         self.name_lbl.setAlignment(Qt.AlignCenter)
