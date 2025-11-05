@@ -53,10 +53,16 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_form_layout(self):
         self.form_layout = QtWidgets.QFormLayout()
-        self._add_wall_height()
-        self._add_doors()
         self._add_roof_height()
+        self._add_wall_height()
+        self._add_floors()        
+        self._add_doors()
         self.main_layout.addLayout(self.form_layout)
+
+    def _add_floors(self):
+        self.number_of_floors_spnbox = QtWidgets.QSpinBox()
+        self.number_of_floors_spnbox.setValue(1)
+        self.form_layout.addRow("Number of Floors", self.number_of_floors_spnbox)
 
     def _add_roof_height(self):
         self.roof_height_dspnbox = QtWidgets.QDoubleSpinBox()
