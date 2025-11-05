@@ -63,7 +63,7 @@ class HouseGenWin(QtWidgets.QDialog):
     def _add_windows(self):
         self.number_of_windows_spnbox = QtWidgets.QSpinBox()
         self.number_of_windows_spnbox.setValue(2)
-        self.number_of_windows_spnbox.addRow("Window Number", self.number_of_windows_spnbox)
+        self.form_layout.addRow("Window Number", self.number_of_windows_spnbox)
 
     def _add_floors(self):
         self.number_of_floors_spnbox = QtWidgets.QSpinBox()
