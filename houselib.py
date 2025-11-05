@@ -129,7 +129,7 @@ class House():
         self.number_of_windows = 4
         self.window_height = 2
         self.number_of_doors = 1
-        self.housename = ""
+        self.housename = "House"
     
     def get_height_of_house(self):
         return self.wall_height * self.number_of_floors
@@ -267,9 +267,9 @@ class House():
         if self.roof_height != 0:
             houseroof = self.mkhouseflatroof()
             house_things.append(houseroof)
-
-        cmds.group(house_things, name=self.housename) 
         
+        cmds.group(house_things, name=self.housename) 
+
         doors_grp = self.mkdoors()
         house_things.append(doors_grp) 
         cmds.group(doors_grp, name="doors_GRP", parent=self.housename)
@@ -283,7 +283,30 @@ class House():
                           scale=True, normal=False, preserveNormals=True)
 
      
-    
+"""
+Thinking through grouping logic problem
+
+MAKE DOORS
+Door list is created, empty
+FOR LOOP
+    For each door, append to list
+    Stop making doors when reach door number
+List is returned at end of loop
+
+BUILD
+House things list is created, empty
+Run functions to make house things
+Make parent house group to put everything in
+
+put the house things into the list of house things
+group specific matching objects within the parent group
+
+
+
+
+"""
+
+
 if __name__ == "__main__":
     pass
      
