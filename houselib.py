@@ -40,9 +40,11 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _update_housegen_properties(self):
         self.houseGen.__init__() # reset properties to default
+        self.houseGen.roof_height = self.roof_height_dspnbox.value()        
         self.houseGen.wall_height = self.wall_height_spnbx.value()
+        self.houseGen.number_of_floors = self.number_of_floors_spnbox.value()
+        self.houseGen.number_of_windows = self.number_of_windows_spnbox.value()
         self.houseGen.number_of_doors = self.door_spnbox.value()
-        self.houseGen.roof_height = self.roof_height_dspnbox.value()
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -111,7 +113,7 @@ class House():
         self.roof_height = 1 
         self.number_of_windows = 4
         self.window_height = 2
-        self.number_of_doors = 2
+        self.number_of_doors = 1
     
     def get_height_of_house(self):
         return self.wall_height * self.number_of_floors
@@ -151,14 +153,12 @@ class House():
         return is_rotated
 
     def mkwindows(self):
-        print("Making windows...")
-
         for floor_num in range(self.number_of_floors):
             window_GRP = []
 
             for windows_num in range(self.number_of_windows):
                 xform, shape = cmds.polyCube(height= self.window_height,
-                                            width = 2,
+                                            width = 1,
                                             depth = 1,
                                             name = "window1")
 
@@ -177,7 +177,6 @@ class House():
             window_GRP.clear()
 
     def mkdoors(self):
-        print("Making doors...")
         door_GRP = []        
         
         for door_num in range(self.number_of_doors):
@@ -201,9 +200,6 @@ class House():
         return xform
 
     def mkhouseflatroof(self):
-        print("Making the house's flat roof!")
-        # This doesn't need to check if there's no roof because that'll be checked in the build function
-
         xform, shape = cmds.polyCube(height= self.roof_height,
                                     width = self.house_width*1.25,
                                     depth = self.house_width*1.25,
@@ -216,8 +212,6 @@ class House():
         return xform
     
     def transform_door(self, door):
-        print("Transforming door...")
-
         z_pos = self.get_center_of_wall()
         y_pos = self.get_base_of_house()
         pos = [0, y_pos, z_pos]
@@ -233,8 +227,6 @@ class House():
         cmds.xform(door, translation=pos)
 
     def transform_window(self, window):
-        print("Transforming windows...")
-
         z_pos = self.get_center_of_wall()
         y_pos = self.get_window_height_from_base()
         #x_pos = self.house_width/4
@@ -244,15 +236,11 @@ class House():
         cmds.xform(window, translation=pos)
 
     def transform_window_up(self, window_y_pos):
-        print("Moving windows up a floor...")
-
         y_pos = window_y_pos * self.number_of_floors
 
         cmds.move( y_pos, y=True )
 
     def transform_window_to_back(self, window_z_pos):
-        print("Transforming windows to back...")
-
         z_pos = window_z_pos*-1
 
         cmds.move( z_pos, z=True )
