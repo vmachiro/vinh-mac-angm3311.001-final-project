@@ -13,10 +13,11 @@ def get_maya_main_win():
     main_win = omui.MQtUtil.mainWindow()
     return wrapInstance(int(main_win), QtWidgets.QWidget)
 
-class houseGenWin(QtWidgets.QDialog):
+class HouseGenWin(QtWidgets.QDialog):
     """House Window Class"""
 
     def __init__(self):
+        # runs the init code of the parent QDialog class
         super().__init__(parent=get_maya_main_win())
         self.houseGen = House()
         self.setWindowTitle("House Generator")
@@ -34,13 +35,12 @@ class houseGenWin(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def build(self):
-        self._update_houseGen_properties()
+        self._update_housegen_properties()
         self.houseGen.build()
 
-    def _update_houseGen_properties(self):
+    def _update_housegen_properties(self):
         self.houseGen.__init__() # reset properties to default
-        self.houseGen.window_height = self.windows_spnbx.value()
-        self.houseGen.wall_height = self.wall_height_dspnbx.value()
+        self.houseGen.wall_height = self.wall_height_spnbx.value()
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -51,25 +51,17 @@ class houseGenWin(QtWidgets.QDialog):
 
     def _add_form_layout(self):
         self.form_layout = QtWidgets.QFormLayout()
-        self._add_windows()
         self._add_wall_height()
-        self._add_custom_grpname()
         self.main_layout.addLayout(self.form_layout)
 
     def _add_wall_height(self):
-        self.wall_height_dspnbx = QtWidgets.QDoubleSpinBox()
-        self.wall_height_dspnbx.setValue(1.5)
-        self.wall_height_dspnbx.setSingleStep(0.1)
-        self.form_layout.addRow("Total Rise", self.wall_height_dspnbx)
-
-    def _add_windows(self):
-        self.windows_spnbx = QtWidgets.QSpinBox()
-        self.windows_spnbx.setValue(2)
-        self.form_layout.addRow("windows", self.windows_spnbx)
+        self.wall_height_spnbx = QtWidgets.QSpinBox()
+        self.wall_height_spnbx.setValue(5)
+        self.form_layout.addRow("Steps", self.wall_height_spnbx)
 
     def _add_name_label(self):
         self.name_lbl = QtWidgets.QLabel("House Generator")
-        self.name_lbl.setStyleSheet("background-color: purple;"
+        self.name_lbl.setStyleSheet("background-color: red;"
                                     "color: white;"
                                     "font: bold 24px;")
         self.name_lbl.setAlignment(Qt.AlignCenter)
