@@ -21,13 +21,19 @@ class HouseGenWin(QtWidgets.QDialog):
         super().__init__(parent=get_maya_main_win())
         self.houseGen = House()
         self.setWindowTitle("House Generator")
-        self.resize(500, 200)
+        self.resize(800, 200)
         self._mk_main_layout()
         self._connect_signals()
 
     def _connect_signals(self):
+        self.enable_grp_name_cb.stateChanged.connect(self.toggle_grpname)
         self.cancel_btn.clicked.connect(self.cancel)
         self.build_btn.clicked.connect(self.build)
+
+    @QtCore.Slot()
+    def toggle_grpname(self):
+        is_custom_grpname_enabled = self.enable_grp_name_cb.isChecked()
+        self.grp_name_ledit.setDisabled(not is_custom_grpname_enabled)
 
     @QtCore.Slot()
     def cancel(self):
@@ -45,6 +51,7 @@ class HouseGenWin(QtWidgets.QDialog):
         self.houseGen.number_of_floors = self.number_of_floors_spnbox.value()
         self.houseGen.number_of_windows = self.number_of_windows_spnbox.value()
         self.houseGen.number_of_doors = self.door_spnbox.value()
+        self.houseGen.housename = self.grp_name_ledit.text()
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -60,7 +67,15 @@ class HouseGenWin(QtWidgets.QDialog):
         self._add_floors()        
         self._add_windows()
         self._add_doors()
+        self._add_custom_grpname()
         self.main_layout.addLayout(self.form_layout)
+
+    def _add_custom_grpname(self):
+        self.enable_grp_name_cb = QtWidgets.QCheckBox("Enable Custom House Name")
+        self.grp_name_ledit = QtWidgets.QLineEdit("House")
+        self.grp_name_ledit.setDisabled(True)
+        self.form_layout.addRow(self.enable_grp_name_cb)
+        self.form_layout.addRow("Group", self.grp_name_ledit)
 
     def _add_windows(self):
         self.number_of_windows_spnbox = QtWidgets.QSpinBox()
@@ -114,6 +129,7 @@ class House():
         self.number_of_windows = 4
         self.window_height = 2
         self.number_of_doors = 1
+        self.housename = ""
     
     def get_height_of_house(self):
         return self.wall_height * self.number_of_floors
@@ -173,7 +189,7 @@ class House():
                                         
                 window_GRP.append(xform)
             
-            cmds.group(window_GRP, name="windowsgrp1", parent="House1")
+            cmds.group(window_GRP, name="windows_GRP")
             window_GRP.clear()
 
     def mkdoors(self):
@@ -195,7 +211,7 @@ class House():
             cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)   
 
-        cmds.group(door_GRP, name="doors_GRP", parent="House1")
+        #cmds.group(door_GRP, name="doors_GRP")
         
         return xform
 
@@ -256,12 +272,13 @@ class House():
             houseroof = self.mkhouseflatroof()
             house_things.append(houseroof)
 
-        cmds.group(house_things, name="House1") 
+        cmds.group(house_things, name=self.housename) 
         
         # Windows and doors are made after the HouseGRP because we declare parent when their groups are made
 
         doors_grp = self.mkdoors()
         house_things.append(doors_grp) 
+        cmds.group(doors_grp, name="doors_GRP", parent=self.housename)
         
         windows_grp = self.mkwindows()
         house_things.append(windows_grp)
