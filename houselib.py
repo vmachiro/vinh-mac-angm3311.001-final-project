@@ -41,6 +41,7 @@ class HouseGenWin(QtWidgets.QDialog):
     def _update_housegen_properties(self):
         self.houseGen.__init__() # reset properties to default
         self.houseGen.wall_height = self.wall_height_spnbx.value()
+        self.houseGen.number_of_doors = self.door_spnbox.value()
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -52,12 +53,19 @@ class HouseGenWin(QtWidgets.QDialog):
     def _add_form_layout(self):
         self.form_layout = QtWidgets.QFormLayout()
         self._add_wall_height()
+        self._add_doors()
         self.main_layout.addLayout(self.form_layout)
+
+    def _add_doors(self):
+        self.door_spnbox = QtWidgets.QSpinBox()
+        self.door_spnbox.setValue(1)
+        self.door_spnbox.setMaximum(2)
+        self.form_layout.addRow("Door Number", self.door_spnbox)
 
     def _add_wall_height(self):
         self.wall_height_spnbx = QtWidgets.QSpinBox()
         self.wall_height_spnbx.setValue(5)
-        self.form_layout.addRow("Steps", self.wall_height_spnbx)
+        self.form_layout.addRow("Wall Height", self.wall_height_spnbx)
 
     def _add_name_label(self):
         self.name_lbl = QtWidgets.QLabel("House Generator")
