@@ -213,7 +213,7 @@ class House():
     
     def transform_door(self, door):
         z_pos = self.get_center_of_wall()
-        y_pos = self.get_base_of_house()
+        y_pos = self.get_base_of_house()*.7
         pos = [0, y_pos, z_pos]
 
         cmds.xform(door, translation=pos)
