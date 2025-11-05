@@ -13,7 +13,7 @@ def get_maya_main_win():
     main_win = omui.MQtUtil.mainWindow()
     return wrapInstance(int(main_win), QtWidgets.QWidget)
 
-class HouseGenWin(QtWidgets.QDialog):
+class houseGenWin(QtWidgets.QDialog):
     """House Window Class"""
 
     def __init__(self):
@@ -40,14 +40,14 @@ class HouseGenWin(QtWidgets.QDialog):
 
     @QtCore.Slot()
     def build(self):
-        self._update_housegen_properties()
-        self.housegen.build()
+        self._update_houseGen_properties()
+        self.houseGen.build()
 
-    def _update_housegen_properties(self):
-        self.housegen.__init__() # reset properties to default
-        self.housegen.step_count = self.windows_spnbx.value()
-        self.housegen.wall_height = self.wall_height_dspnbx.value()
-        self.housegen.grp_name = self.grp_name_ledit.text()
+    def _update_houseGen_properties(self):
+        self.houseGen.__init__() # reset properties to default
+        self.houseGen.window_height = self.windows_spnbx.value()
+        self.houseGen.wall_height = self.wall_height_dspnbx.value()
+        self.houseGen.grp_name = self.grp_name_ledit.text()
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -106,7 +106,6 @@ class House():
         self.roof_height = 1 
         self.number_of_windows = 4
         self.window_height = 2
-        self.window_width = 2
         self.number_of_doors = 2
     
     def get_height_of_house(self):
@@ -154,8 +153,8 @@ class House():
 
             for windows_num in range(self.number_of_windows):
                 xform, shape = cmds.polyCube(height= self.window_height,
-                                            width = self.window_width,
-                                            depth = self.window_width/4,
+                                            width = 2,
+                                            depth = 1,
                                             name = "window1")
 
                 self.transform_window(xform)
