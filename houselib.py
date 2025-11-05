@@ -25,14 +25,8 @@ class houseGenWin(QtWidgets.QDialog):
         self._connect_signals()
 
     def _connect_signals(self):
-        self.enable_grp_name_cb.stateChanged.connect(self.toggle_grpname)
         self.cancel_btn.clicked.connect(self.cancel)
         self.build_btn.clicked.connect(self.build)
-
-    @QtCore.Slot()
-    def toggle_grpname(self):
-        is_custom_grpname_enabled = self.enable_grp_name_cb.isChecked()
-        self.grp_name_ledit.setDisabled(not is_custom_grpname_enabled)
 
     @QtCore.Slot()
     def cancel(self):
@@ -47,7 +41,6 @@ class houseGenWin(QtWidgets.QDialog):
         self.houseGen.__init__() # reset properties to default
         self.houseGen.window_height = self.windows_spnbx.value()
         self.houseGen.wall_height = self.wall_height_dspnbx.value()
-        # self.houseGen.grp_name = self.grp_name_ledit.text()
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -62,13 +55,6 @@ class houseGenWin(QtWidgets.QDialog):
         self._add_wall_height()
         self._add_custom_grpname()
         self.main_layout.addLayout(self.form_layout)
-
-    """def _add_custom_grpname(self):
-        self.enable_grp_name_cb = QtWidgets.QCheckBox("Enable Custom Group")
-        self.grp_name_ledit = QtWidgets.QLineEdit("stair")
-        self.grp_name_ledit.setDisabled(True)
-        self.form_layout.addRow(self.enable_grp_name_cb)
-        self.form_layout.addRow("Group", self.grp_name_ledit)"""
 
     def _add_wall_height(self):
         self.wall_height_dspnbx = QtWidgets.QDoubleSpinBox()
