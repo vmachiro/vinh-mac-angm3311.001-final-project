@@ -32,6 +32,7 @@ class HouseGenWin(QtWidgets.QDialog):
         self.roof_height_slider.valueChanged.connect(self._update_roof)        
         self.enable_grp_name_cb.stateChanged.connect(self.toggle_grpname)
         self.enable_rand_cb.stateChanged.connect(self.toggle_random)
+        self.clear_btn.clicked.connect(self.clear)
         self.cancel_btn.clicked.connect(self.cancel)
         self.build_btn.clicked.connect(self.build)
 
@@ -54,6 +55,11 @@ class HouseGenWin(QtWidgets.QDialog):
         is_random_houses_enabled = self.enable_rand_cb.isChecked()
         self.number_of_floors_slider.setDisabled(is_random_houses_enabled)
         return is_random_houses_enabled
+
+    @QtCore.Slot()
+    def clear(self):
+        cmds.select(cmds.ls(self.houseGen.housename+"*"))        
+        cmds.delete()
 
     @QtCore.Slot()
     def cancel(self):
@@ -95,11 +101,10 @@ class HouseGenWin(QtWidgets.QDialog):
         self._add_windows()
         self._add_doors()
         self._add_custom_grpname()
-
         self.main_layout.addLayout(self.form_layout)
 
     def _add_randomization(self):
-        self.enable_rand_cb = QtWidgets.QCheckBox("Floor Randomization")
+        self.enable_rand_cb = QtWidgets.QCheckBox("Choose floors for me!")
         self.form_layout.addRow(self.enable_rand_cb)
 
     def _add_houses(self):
@@ -129,7 +134,6 @@ class HouseGenWin(QtWidgets.QDialog):
         self.floor_result_lbl.setAlignment(Qt.AlignCenter)
         self.form_layout.addRow(self.floor_result_lbl)
 
-
     def _add_roof_height(self):
         self.roof_height_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
         self.roof_height_slider.setRange(0,5)
@@ -148,7 +152,7 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_wall_height(self):
         self.wall_height_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
-        self.wall_height_slider.setValue(5)
+        self.wall_height_slider.setValue(4)
         self.wall_height_slider.setRange(4,20)
         self.form_layout.addRow("Wall Height", self.wall_height_slider)
 
@@ -167,8 +171,10 @@ class HouseGenWin(QtWidgets.QDialog):
     def _mk_btn_layout(self):
         self.btn_layout = QtWidgets.QHBoxLayout()
         self.build_btn = QtWidgets.QPushButton("Build")
+        self.clear_btn = QtWidgets.QPushButton("Clear all")
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
         self.btn_layout.addWidget(self.build_btn)
+        self.btn_layout.addWidget(self.clear_btn)
         self.btn_layout.addWidget(self.cancel_btn)
         self.main_layout.addLayout(self.btn_layout)
 
@@ -209,8 +215,8 @@ class House():
         return xform
 
     def mkwindows(self):
+        window_GRP = []
         for floor_num in range(self.number_of_floors):
-            window_GRP = []
 
             for windows_num in range(self.number_of_windows):
                 xform, shape = cmds.polyCube(height= 2,
@@ -225,12 +231,9 @@ class House():
                     self.transform_window_to_back(world_pos[2])
 
                 if windows_num > 1:
-                    self.transform_window_up(world_pos[1])            
-                                        
-                window_GRP.append(xform)
-
-            if floor_num > 0:
-                self.transform_window_up(world_pos[1])            
+                    self.transform_window_up(world_pos[1],floor_num)              
+                
+                window_GRP.append(xform)  
 
             return window_GRP
             
@@ -287,8 +290,8 @@ class House():
 
         cmds.xform(window, translation=pos)
 
-    def transform_window_up(self, window_y_pos):
-        y_pos = window_y_pos * self.number_of_floors
+    def transform_window_up(self, window_y_pos, floor_num):
+        y_pos = window_y_pos * (floor_num + 1 )* self.number_of_floors
 
         cmds.move( y_pos, y=True )
 
