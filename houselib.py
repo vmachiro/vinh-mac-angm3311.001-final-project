@@ -152,8 +152,8 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_wall_height(self):
         self.wall_height_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
-        self.wall_height_slider.setValue(4)
-        self.wall_height_slider.setRange(4,20)
+        self.wall_height_slider.setValue(5)
+        self.wall_height_slider.setRange(5,20)
         self.form_layout.addRow("Wall Height", self.wall_height_slider)
 
         self.wall_result_lbl = QtWidgets.QLabel('', self)        
@@ -171,7 +171,7 @@ class HouseGenWin(QtWidgets.QDialog):
     def _mk_btn_layout(self):
         self.btn_layout = QtWidgets.QHBoxLayout()
         self.build_btn = QtWidgets.QPushButton("Build")
-        self.clear_btn = QtWidgets.QPushButton("Clear all")
+        self.clear_btn = QtWidgets.QPushButton("Clear all houses")
         self.cancel_btn = QtWidgets.QPushButton("Cancel")
         self.btn_layout.addWidget(self.build_btn)
         self.btn_layout.addWidget(self.clear_btn)
@@ -216,6 +216,7 @@ class House():
 
     def mkwindows(self):
         window_GRP = []
+
         for floor_num in range(self.number_of_floors):
 
             for windows_num in range(self.number_of_windows):
@@ -225,16 +226,17 @@ class House():
                                             name = "window"+str(windows_num))
 
                 self.transform_window(xform)
+
                 world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
                 if windows_num%2 == 1:
-                    self.transform_window_to_back(world_pos[2])
+                    self.transform_window_to_back(world_pos[2])        
 
                 if windows_num > 1:
-                    self.transform_window_up(world_pos[1],floor_num)              
+                        self.transform_window_up(world_pos[1],floor_num, xform)      
                 
                 window_GRP.append(xform)  
-
+            
             return window_GRP
             
     def mkdoors(self):
@@ -290,10 +292,12 @@ class House():
 
         cmds.xform(window, translation=pos)
 
-    def transform_window_up(self, window_y_pos, floor_num):
-        y_pos = window_y_pos * (floor_num + 1 )* self.number_of_floors
-
-        cmds.move( y_pos, y=True )
+    def transform_window_up(self, window_y_pos, floor_num, window):
+        if floor_num == 0:
+            return 
+        y_pos = window_y_pos * floor_num * self.number_of_floors * 1.5
+     
+        cmds.move( y_pos, window, y=True )
 
     def transform_window_to_back(self, window_z_pos):
         z_pos = window_z_pos*-1
