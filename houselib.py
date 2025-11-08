@@ -74,8 +74,9 @@ class HouseGenWin(QtWidgets.QDialog):
         self.houseGen.number_of_doors = self.door_spnbox.value()
         self.houseGen.housename = self.grp_name_ledit.text()
 
-        if self.toggle_random == True:
-            self.houseGen.number_of_floors = random.randint(1,10)
+        if self.toggle_random() == True:
+            random_floor_num = random.randint(1,5)
+            self.houseGen.number_of_floors = random_floor_num
 
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
@@ -278,6 +279,7 @@ class House():
 
         cmds.xform(door, translation=pos)
 
+
     def transform_window(self, window):
         z_pos = self.get_center_of_wall()
         y_pos = self.get_window_height_from_base()
@@ -297,10 +299,10 @@ class House():
 
         cmds.move( z_pos, z=True )
 
-    def transform_house(self, house_x_pos, house_num):
-        x_pos = house_x_pos + self.house_width*house_num
+    def transform_house(self, house_x_pos, house_num, housename):
+        x_pos = house_x_pos + self.house_width*house_num*1.5
 
-        cmds.move( x_pos, x=True )
+        cmds.move( x_pos, housename, x=True )
 
     def build(self):
 
@@ -317,6 +319,7 @@ class House():
                 house_things.append(houseroof)
             
             cmds.group(house_things, name=house_name)
+            house_things.clear()
 
             doors_grp = self.mkdoors()
             cmds.group(doors_grp, name="doors_GRP", parent=house_name)
@@ -325,14 +328,12 @@ class House():
             cmds.group(windows_grp, name="windows_GRP", parent=house_name)
             
             world_pos = cmds.xform(house_name, query=True, worldSpace=True, translation=True)
-            print(world_pos)
       
-            self.transform_house(world_pos[0],house_num)
+            self.transform_house(world_pos[0],house_num,house_name)
             
             cmds.makeIdentity(house_name, apply=True, translate=True, rotate=True, 
                             scale=True, normal=False, preserveNormals=True)
             
-            house_things.clear()
 
 
 
