@@ -58,6 +58,7 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _update_housegen_properties(self):
         self.houseGen.__init__() # reset properties to default
+        self.houseGen.number_of_houses = self.number_of_houses_spnbox.value()
         self.houseGen.roof_height = self.roof_height_slider.value()        
         self.houseGen.wall_height = self.wall_height_slider.value()
         self.houseGen.number_of_floors = self.number_of_floors_slider.value()
@@ -74,6 +75,7 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_form_layout(self):
         self.form_layout = QtWidgets.QFormLayout()
+        self._add_houses()
         self._add_roof_height()
         self._add_wall_height()
         self._add_floors()     
@@ -82,6 +84,10 @@ class HouseGenWin(QtWidgets.QDialog):
         self._add_custom_grpname()
         self.main_layout.addLayout(self.form_layout)
 
+    def _add_houses(self):
+        self.number_of_houses_spnbox = QtWidgets.QSpinBox()
+        self.number_of_houses_spnbox.setValue(1)
+        self.form_layout.addRow("Number of Houses", self.number_of_houses_spnbox)
 
     def _add_custom_grpname(self):
         self.enable_grp_name_cb = QtWidgets.QCheckBox("Enable Custom House Name")
@@ -126,8 +132,8 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_wall_height(self):
         self.wall_height_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
-        self.wall_height_slider.setValue(2)
-        self.wall_height_slider.setRange(1,10)
+        self.wall_height_slider.setValue(5)
+        self.wall_height_slider.setRange(4,20)
         self.form_layout.addRow("Wall Height", self.wall_height_slider)
 
         self.wall_result_lbl = QtWidgets.QLabel('', self)        
@@ -177,7 +183,6 @@ class House():
         return self.house_width/2
     
     def mkhousebody(self):
-        print("Making your house!")
         xform, shape = cmds.polyCube(height= self.get_height_of_house(),
                                     width = self.house_width,
                                     depth = self.house_width,
@@ -291,30 +296,39 @@ class House():
 
         cmds.move( z_pos, z=True )
 
+    def transform_house(self, house_x_pos):
+        x_pos = house_x_pos + 2
+
+        cmds.move( x_pos, x=True )
+
     def build(self):
 
         house_things = []
 
-        housebody = self.mkhousebody()
-        house_things.append(housebody)
+        for house_num in range(self.number_of_houses):
+            housebody = self.mkhousebody()
+            house_things.append(housebody)
 
-        if self.roof_height != 0:
-            houseroof = self.mkhouseflatroof()
-            house_things.append(houseroof)
-        
-        cmds.group(house_things, name=self.housename) 
+            if self.roof_height != 0:
+                houseroof = self.mkhouseflatroof()
+                house_things.append(houseroof)
+            
+            cmds.group(house_things, name=self.housename) 
 
-        doors_grp = self.mkdoors()
-        house_things.append(doors_grp) 
-        cmds.group(doors_grp, name="doors_GRP", parent=self.housename)
-        
-        windows_grp = self.mkwindows()
-        house_things.append(windows_grp)
-        cmds.group(windows_grp, name="windows_GRP", parent=self.housename)
+            doors_grp = self.mkdoors()
+            house_things.append(doors_grp) 
+            cmds.group(doors_grp, name="doors_GRP", parent=self.housename)
+            
+            windows_grp = self.mkwindows()
+            house_things.append(windows_grp)
+            cmds.group(windows_grp, name="windows_GRP", parent=self.housename)
+            
+            world_pos = cmds.xform(self.housename, query=True, worldSpace=True, translation=True)
 
+            self.transform_house(world_pos[0])
 
-        cmds.makeIdentity(self.housename, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)
+            cmds.makeIdentity(self.housename, apply=True, translate=True, rotate=True, 
+                            scale=True, normal=False, preserveNormals=True)
 
 
 
