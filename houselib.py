@@ -6,6 +6,7 @@ import maya.OpenMayaUI as omui
 from shiboken2 import wrapInstance
 
 
+import random
 import maya.cmds as cmds
 
 
@@ -30,6 +31,7 @@ class HouseGenWin(QtWidgets.QDialog):
         self.wall_height_slider.valueChanged.connect(self._update_walls)        
         self.roof_height_slider.valueChanged.connect(self._update_roof)        
         self.enable_grp_name_cb.stateChanged.connect(self.toggle_grpname)
+        self.enable_rand_cb.stateChanged.connect(self.toggle_random)
         self.cancel_btn.clicked.connect(self.cancel)
         self.build_btn.clicked.connect(self.build)
 
@@ -46,6 +48,12 @@ class HouseGenWin(QtWidgets.QDialog):
     def toggle_grpname(self):
         is_custom_grpname_enabled = self.enable_grp_name_cb.isChecked()
         self.grp_name_ledit.setDisabled(not is_custom_grpname_enabled)
+    
+    @QtCore.Slot()
+    def toggle_random(self):
+        is_random_houses_enabled = self.enable_rand_cb.isChecked()
+        self.number_of_floors_slider.setDisabled(is_random_houses_enabled)
+        return is_random_houses_enabled
 
     @QtCore.Slot()
     def cancel(self):
@@ -66,6 +74,9 @@ class HouseGenWin(QtWidgets.QDialog):
         self.houseGen.number_of_doors = self.door_spnbox.value()
         self.houseGen.housename = self.grp_name_ledit.text()
 
+        if self.toggle_random == True:
+            self.houseGen.number_of_floors = random.randint(1,10)
+
     def _mk_main_layout(self):
         self.main_layout = QtWidgets.QVBoxLayout()
         self._add_name_label()
@@ -82,7 +93,13 @@ class HouseGenWin(QtWidgets.QDialog):
         self._add_windows()
         self._add_doors()
         self._add_custom_grpname()
+        self._add_randomization()
         self.main_layout.addLayout(self.form_layout)
+
+    def _add_randomization(self):
+        self.enable_rand_cb = QtWidgets.QCheckBox("Floor Nunmber Randomization")
+        self.number_of_floors_slider.setDisabled(True)
+        self.form_layout.addRow(self.enable_rand_cb)
 
     def _add_houses(self):
         self.number_of_houses_spnbox = QtWidgets.QSpinBox()
@@ -233,9 +250,6 @@ class House():
                 self.transform_door_to_back(xform)
             
             door_GRP.append(xform)
-            
-            """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)   """
         
         return door_GRP
 
@@ -247,8 +261,6 @@ class House():
 
         cmds.xform(xform, translation = [0,self.get_height_of_house(),0])
 
-        """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)"""
         return xform
     
     def transform_door(self, door):
