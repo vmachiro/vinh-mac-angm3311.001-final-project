@@ -307,14 +307,13 @@ class House():
             cmds.group(house_things, name=house_name)
 
             doors_grp = self.mkdoors()
-            house_things.append(doors_grp) 
             cmds.group(doors_grp, name="doors_GRP", parent=house_name)
             
             windows_grp = self.mkwindows()
-            house_things.append(windows_grp)
             cmds.group(windows_grp, name="windows_GRP", parent=house_name)
             
             world_pos = cmds.xform(house_name, query=True, worldSpace=True, translation=True)
+            print(world_pos)
       
             self.transform_house(world_pos[0],house_num)
             
