@@ -21,7 +21,7 @@ class HouseGenWin(QtWidgets.QDialog):
         super().__init__(parent=get_maya_main_win())
         self.houseGen = House()
         self.setWindowTitle("House Generator")
-        self.resize(800, 500)
+        self.resize(800, 200)
         self._mk_main_layout()
         self._connect_signals()
 
@@ -34,13 +34,13 @@ class HouseGenWin(QtWidgets.QDialog):
         self.build_btn.clicked.connect(self.build)
 
     def _update_floors(self, value):
-        self.floor_result_label.setText(f'Current Value: {value}')
+        self.floor_result_lbl.setText(f'Current Value: {value}')
     
     def _update_walls(self, value):
-        self.wall_result_label.setText(f'Current Value: {value}')
+        self.wall_result_lbl.setText(f'Current Value: {value}')
 
     def _update_roof(self, value):
-        self.roof_result_label.setText(f'Current Value: {value}')
+        self.roof_result_lbl.setText(f'Current Value: {value}')
 
     @QtCore.Slot()
     def toggle_grpname(self):
@@ -75,27 +75,13 @@ class HouseGenWin(QtWidgets.QDialog):
     def _add_form_layout(self):
         self.form_layout = QtWidgets.QFormLayout()
         self._add_roof_height()
-        self._add_roof_value_label()
         self._add_wall_height()
-        self._add_wall_value_label()
         self._add_floors()     
-        self._add_floor_value_label()   
         self._add_windows()
         self._add_doors()
         self._add_custom_grpname()
         self.main_layout.addLayout(self.form_layout)
 
-    def _add_roof_value_label(self):
-        self.roof_result_label = QtWidgets.QLabel('', self)
-        self.form_layout.addRow(self.roof_result_label)
-
-    def _add_wall_value_label(self):
-        self.wall_result_label = QtWidgets.QLabel('', self)        
-        self.form_layout.addRow(self.wall_result_label)
-
-    def _add_floor_value_label(self):
-        self.floor_result_label = QtWidgets.QLabel('', self)
-        self.form_layout.addRow(self.floor_result_label)
 
     def _add_custom_grpname(self):
         self.enable_grp_name_cb = QtWidgets.QCheckBox("Enable Custom House Name")
@@ -111,23 +97,31 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_floors(self):
         self.number_of_floors_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
-        self.number_of_floors_slider.setRange(1,5)
+        self.number_of_floors_slider.setRange(1,10)
         self.number_of_floors_slider.setValue(1)    
+        self.number_of_floors_slider.setTickPosition(self.number_of_floors_slider.TicksBelow) # won't read QSlider.TickPosition from pyside5+, prob pyside2 issue. 
+        self.number_of_floors_slider.setTickInterval(5)
         self.form_layout.addRow("Number of Floors", self.number_of_floors_slider)
+        
+        self.floor_result_lbl = QtWidgets.QLabel('', self)
+        self.floor_result_lbl.setAlignment(Qt.AlignCenter)
+        self.form_layout.addRow(self.floor_result_lbl)
+
 
     def _add_roof_height(self):
         self.roof_height_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
-        self.roof_height_slider.setMinimum(0)
-        self.roof_height_slider.setMaximum(5)
-        self.roof_height_slider.setSingleStep(0.25)
+        self.roof_height_slider.setRange(0,5)
         self.roof_height_slider.setValue(1)          
-
         self.form_layout.addRow("Roof Height", self.roof_height_slider)
+
+        self.roof_result_lbl = QtWidgets.QLabel('', self)
+        self.roof_result_lbl.setAlignment(Qt.AlignCenter)
+        self.form_layout.addRow(self.roof_result_lbl)
 
     def _add_doors(self):
         self.door_spnbox = QtWidgets.QSpinBox()
         self.door_spnbox.setValue(1)
-        self.door_spnbox.setMaximum(2)
+        self.door_spnbox.setRange(0,2)
         self.form_layout.addRow("Door Number", self.door_spnbox)
 
     def _add_wall_height(self):
@@ -135,6 +129,10 @@ class HouseGenWin(QtWidgets.QDialog):
         self.wall_height_slider.setValue(2)
         self.wall_height_slider.setRange(1,10)
         self.form_layout.addRow("Wall Height", self.wall_height_slider)
+
+        self.wall_result_lbl = QtWidgets.QLabel('', self)        
+        self.wall_result_lbl.setAlignment(Qt.AlignCenter)
+        self.form_layout.addRow(self.wall_result_lbl)
 
     def _add_name_label(self):
         self.name_lbl = QtWidgets.QLabel("House Generator")
