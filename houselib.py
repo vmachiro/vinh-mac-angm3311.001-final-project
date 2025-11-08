@@ -90,15 +90,15 @@ class HouseGenWin(QtWidgets.QDialog):
         self._add_roof_height()
         self._add_wall_height()
         self._add_floors()     
+        self._add_randomization()        
         self._add_windows()
         self._add_doors()
         self._add_custom_grpname()
-        self._add_randomization()
+
         self.main_layout.addLayout(self.form_layout)
 
     def _add_randomization(self):
-        self.enable_rand_cb = QtWidgets.QCheckBox("Floor Nunmber Randomization")
-        self.number_of_floors_slider.setDisabled(True)
+        self.enable_rand_cb = QtWidgets.QCheckBox("Floor Randomization")
         self.form_layout.addRow(self.enable_rand_cb)
 
     def _add_houses(self):
