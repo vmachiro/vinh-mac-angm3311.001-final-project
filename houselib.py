@@ -102,7 +102,7 @@ class HouseGenWin(QtWidgets.QDialog):
         self.number_of_floors_slider.setTickPosition(self.number_of_floors_slider.TicksBelow) # won't read QSlider.TickPosition from pyside5+, prob pyside2 issue. 
         self.number_of_floors_slider.setTickInterval(5)
         self.form_layout.addRow("Number of Floors", self.number_of_floors_slider)
-        
+
         self.floor_result_lbl = QtWidgets.QLabel('', self)
         self.floor_result_lbl.setAlignment(Qt.AlignCenter)
         self.form_layout.addRow(self.floor_result_lbl)
@@ -153,12 +153,12 @@ class HouseGenWin(QtWidgets.QDialog):
 class House():
 
     def __init__(self):
+        self.number_of_houses = 1
         self.number_of_floors = 2        
         self.wall_height = 8 
         self.house_width = 8
         self.roof_height = 1 
         self.number_of_windows = 4
-        self.window_height = 2
         self.number_of_doors = 1
         self.housename = "House"
     
@@ -203,7 +203,7 @@ class House():
             window_GRP = []
 
             for windows_num in range(self.number_of_windows):
-                xform, shape = cmds.polyCube(height= self.window_height,
+                xform, shape = cmds.polyCube(height= 2,
                                             width = 1,
                                             depth = 1,
                                             name = "window1")
@@ -316,29 +316,6 @@ class House():
         cmds.makeIdentity(self.housename, apply=True, translate=True, rotate=True, 
                           scale=True, normal=False, preserveNormals=True)
 
-     
-"""
-Thinking through grouping logic problem
-
-MAKE DOORS
-Door list is created, empty
-FOR LOOP
-    For each door, append to list
-    Stop making doors when reach door number
-List is returned at end of loop
-
-BUILD
-House things list is created, empty
-Run functions to make house things
-Make parent house group to put everything in
-
-put the house things into the list of house things
-group specific matching objects within the parent group
-
-
-
-
-"""
 
 
 if __name__ == "__main__":
