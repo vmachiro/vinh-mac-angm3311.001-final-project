@@ -186,22 +186,11 @@ class House():
         xform, shape = cmds.polyCube(height= self.get_height_of_house(),
                                     width = self.house_width,
                                     depth = self.house_width,
-                                    name = "housebody1")
+                                    name = "housebody")
         
         cmds.xform(xform, translation = [0,self.get_height_of_house()/2,0])          
         
         return xform
-
-    def rotate_window(self, xform, windows_num):
-        degrees = [0,90]
-
-        world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
-
-        is_rotated = windows_num%2
-        world_pos[1] = degrees[is_rotated]
-        cmds.xform( r=True, ro=(world_pos) )
-
-        return is_rotated
 
     def mkwindows(self):
         for floor_num in range(self.number_of_floors):
@@ -211,7 +200,7 @@ class House():
                 xform, shape = cmds.polyCube(height= 2,
                                             width = 1,
                                             depth = 1,
-                                            name = "window1")
+                                            name = "window"+str(windows_num))
 
                 self.transform_window(xform)
                 world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
@@ -236,7 +225,7 @@ class House():
             xform, shape = cmds.polyCube(height= self.wall_height/4,
                                         width = self.house_width/10,
                                         depth = .5,
-                                        name = "door1")
+                                        name = "door"+str(door_num))
             
             self.transform_door(xform)
             
@@ -245,8 +234,8 @@ class House():
             
             door_GRP.append(xform)
             
-            cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)   
+            """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)   """
         
         return door_GRP
 
@@ -254,12 +243,12 @@ class House():
         xform, shape = cmds.polyCube(height= self.roof_height,
                                     width = self.house_width*1.25,
                                     depth = self.house_width*1.25,
-                                    name = "houseflatroof1")
+                                    name = "roof")
 
         cmds.xform(xform, translation = [0,self.get_height_of_house(),0])
 
-        cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                          scale=True, normal=False, preserveNormals=True)
+        """cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                          scale=True, normal=False, preserveNormals=True)"""
         return xform
     
     def transform_door(self, door):
@@ -296,8 +285,8 @@ class House():
 
         cmds.move( z_pos, z=True )
 
-    def transform_house(self, house_x_pos):
-        x_pos = house_x_pos + 2
+    def transform_house(self, house_x_pos, house_num):
+        x_pos = house_x_pos + self.house_width*house_num
 
         cmds.move( x_pos, x=True )
 
@@ -306,6 +295,8 @@ class House():
         house_things = []
 
         for house_num in range(self.number_of_houses):
+            house_name = self.housename+str(house_num) # non-static var allows parenting groups over a loop.
+
             housebody = self.mkhousebody()
             house_things.append(housebody)
 
@@ -313,22 +304,24 @@ class House():
                 houseroof = self.mkhouseflatroof()
                 house_things.append(houseroof)
             
-            cmds.group(house_things, name=self.housename) 
+            cmds.group(house_things, name=house_name)
 
             doors_grp = self.mkdoors()
             house_things.append(doors_grp) 
-            cmds.group(doors_grp, name="doors_GRP", parent=self.housename)
+            cmds.group(doors_grp, name="doors_GRP", parent=house_name)
             
             windows_grp = self.mkwindows()
             house_things.append(windows_grp)
-            cmds.group(windows_grp, name="windows_GRP", parent=self.housename)
+            cmds.group(windows_grp, name="windows_GRP", parent=house_name)
             
-            world_pos = cmds.xform(self.housename, query=True, worldSpace=True, translation=True)
-
-            self.transform_house(world_pos[0])
-
-            cmds.makeIdentity(self.housename, apply=True, translate=True, rotate=True, 
+            world_pos = cmds.xform(house_name, query=True, worldSpace=True, translation=True)
+      
+            self.transform_house(world_pos[0],house_num)
+            
+            cmds.makeIdentity(house_name, apply=True, translate=True, rotate=True, 
                             scale=True, normal=False, preserveNormals=True)
+            
+            house_things.clear()
 
 
 
