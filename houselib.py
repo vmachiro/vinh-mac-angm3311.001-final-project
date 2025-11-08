@@ -123,8 +123,6 @@ class HouseGenWin(QtWidgets.QDialog):
         self.number_of_floors_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
         self.number_of_floors_slider.setRange(1,10)
         self.number_of_floors_slider.setValue(1)    
-        self.number_of_floors_slider.setTickPosition(self.number_of_floors_slider.TicksBelow) # won't read QSlider.TickPosition from pyside5+, prob pyside2 issue. 
-        self.number_of_floors_slider.setTickInterval(5)
         self.form_layout.addRow("Number of Floors", self.number_of_floors_slider)
 
         self.floor_result_lbl = QtWidgets.QLabel('', self)
