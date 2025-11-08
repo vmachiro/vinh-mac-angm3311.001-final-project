@@ -21,13 +21,14 @@ class HouseGenWin(QtWidgets.QDialog):
         super().__init__(parent=get_maya_main_win())
         self.houseGen = House()
         self.setWindowTitle("House Generator")
-        self.resize(800, 400)
+        self.resize(800, 500)
         self._mk_main_layout()
         self._connect_signals()
 
     def _connect_signals(self):
         self.number_of_floors_slider.valueChanged.connect(self._update_floors)
         self.wall_height_slider.valueChanged.connect(self._update_walls)        
+        self.roof_height_slider.valueChanged.connect(self._update_roof)        
         self.enable_grp_name_cb.stateChanged.connect(self.toggle_grpname)
         self.cancel_btn.clicked.connect(self.cancel)
         self.build_btn.clicked.connect(self.build)
@@ -37,7 +38,9 @@ class HouseGenWin(QtWidgets.QDialog):
     
     def _update_walls(self, value):
         self.wall_result_label.setText(f'Current Value: {value}')
-    
+
+    def _update_roof(self, value):
+        self.roof_result_label.setText(f'Current Value: {value}')
 
     @QtCore.Slot()
     def toggle_grpname(self):
@@ -55,7 +58,7 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _update_housegen_properties(self):
         self.houseGen.__init__() # reset properties to default
-        self.houseGen.roof_height = self.roof_height_dspnbox.value()        
+        self.houseGen.roof_height = self.roof_height_slider.value()        
         self.houseGen.wall_height = self.wall_height_slider.value()
         self.houseGen.number_of_floors = self.number_of_floors_slider.value()
         self.houseGen.number_of_windows = self.number_of_windows_spnbox.value()
@@ -72,6 +75,7 @@ class HouseGenWin(QtWidgets.QDialog):
     def _add_form_layout(self):
         self.form_layout = QtWidgets.QFormLayout()
         self._add_roof_height()
+        self._add_roof_value_label()
         self._add_wall_height()
         self._add_wall_value_label()
         self._add_floors()     
@@ -80,6 +84,10 @@ class HouseGenWin(QtWidgets.QDialog):
         self._add_doors()
         self._add_custom_grpname()
         self.main_layout.addLayout(self.form_layout)
+
+    def _add_roof_value_label(self):
+        self.roof_result_label = QtWidgets.QLabel('', self)
+        self.form_layout.addRow(self.roof_result_label)
 
     def _add_wall_value_label(self):
         self.wall_result_label = QtWidgets.QLabel('', self)        
@@ -103,14 +111,18 @@ class HouseGenWin(QtWidgets.QDialog):
 
     def _add_floors(self):
         self.number_of_floors_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
-        self.number_of_floors_slider.setValue(1)
         self.number_of_floors_slider.setRange(1,5)
+        self.number_of_floors_slider.setValue(1)    
         self.form_layout.addRow("Number of Floors", self.number_of_floors_slider)
 
     def _add_roof_height(self):
-        self.roof_height_dspnbox = QtWidgets.QDoubleSpinBox()
-        self.roof_height_dspnbox.setValue(1)
-        self.form_layout.addRow("Roof Height", self.roof_height_dspnbox)
+        self.roof_height_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
+        self.roof_height_slider.setMinimum(0)
+        self.roof_height_slider.setMaximum(5)
+        self.roof_height_slider.setSingleStep(0.25)
+        self.roof_height_slider.setValue(1)          
+
+        self.form_layout.addRow("Roof Height", self.roof_height_slider)
 
     def _add_doors(self):
         self.door_spnbox = QtWidgets.QSpinBox()
@@ -121,7 +133,7 @@ class HouseGenWin(QtWidgets.QDialog):
     def _add_wall_height(self):
         self.wall_height_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
         self.wall_height_slider.setValue(2)
-        self.wall_height_slider.setRange(1,20)
+        self.wall_height_slider.setRange(1,10)
         self.form_layout.addRow("Wall Height", self.wall_height_slider)
 
     def _add_name_label(self):
