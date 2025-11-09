@@ -219,10 +219,8 @@ class House():
 
     def mkwindows(self):
         window_GRP = []
-        degrees = [0,90]
 
         for floor_num in range(self.number_of_floors):
-
             for windows_num in range(self.number_of_windows):
                 xform, shape = cmds.polyCube(height= 2,
                                             width = 1,
@@ -234,25 +232,43 @@ class House():
 
                 if self.number_of_windows > 2:
                     if windows_num > 1:
-                        pos = [0, degrees[1], 0]
-                        cmds.xform( r=True, ro=(pos) )
+                        rotate_pos = [0, 90, 0]
+                        cmds.xform( r=True, ro=(rotate_pos) )
+                        
+                        x_pos = world_pos[2]
+                        cmds.move( x_pos, x=True )
                         world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
                 if windows_num%2 == 1:
                     self.transform_window_to_back(world_pos[2])        
                     world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
-                if floor_num > 0:
-                    pos = [world_pos[0], (world_pos[1]+(self.get_curent_floor(floor_num))), world_pos[2]]
+                cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
+                                    scale=True, normal=False, preserveNormals=True)
 
-                    cmds.xform( xform, translation=pos ) 
+                if floor_num > 0:
+                    self.transform_window_up(floor_num, xform, world_pos) 
                 
                 window_GRP.append(xform)  
             
-            print(floor_num)
-
         return window_GRP
-            
+
+    def transform_window_up(self, floor_num, xform, world_pos):
+        pos = [0, (world_pos[1]+(self.get_curent_floor(floor_num))), 0]
+        cmds.xform( xform, translation=pos )
+
+    def transform_window(self, window):
+        z_pos = self.get_center_of_wall()
+        y_pos = self.get_window_height_from_base()
+        pos = [0, y_pos, z_pos]
+
+        cmds.xform(window, translation=pos)
+
+    def transform_window_to_back(self, window_z_pos):
+        z_pos = window_z_pos*-1
+
+        cmds.move( z_pos, z=True )
+
     def mkdoors(self):
         door_GRP = []        
         
@@ -295,31 +311,6 @@ class House():
         pos = [0, y_pos, z_pos*-1]
 
         cmds.xform(door, translation=pos)
-
-    def transform_window(self, window):
-        z_pos = self.get_center_of_wall()
-        y_pos = self.get_window_height_from_base()
-        #x_pos = self.house_width/4
-
-        pos = [0, y_pos, z_pos]
-
-        cmds.xform(window, translation=pos)
-
-    def transform_window_to_back(self, window_z_pos):
-        z_pos = window_z_pos*-1
-
-        cmds.move( z_pos, z=True )
-
-    def rotate_window(self, xform, windows_num):
-        degrees = [0,90]
-
-        world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
-
-        is_rotated = windows_num%2
-        world_pos[1] = degrees[is_rotated]
-        cmds.xform( r=True, ro=(world_pos) )
-
-        return is_rotated
 
     def transform_house(self, house_x_pos, house_num, housename):
         x_pos = house_x_pos + self.house_width*house_num*1.5
