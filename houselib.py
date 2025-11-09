@@ -219,17 +219,24 @@ class House():
 
     def mkwindows(self):
         window_GRP = []
+        degrees = [0,90]
 
         for floor_num in range(self.number_of_floors):
 
             for windows_num in range(self.number_of_windows):
                 xform, shape = cmds.polyCube(height= 2,
                                             width = 1,
-                                            depth = 1,
+                                            depth = 0.5,
                                             name = "window"+str(windows_num))
-
+                
                 self.transform_window(xform)
                 world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+
+                if self.number_of_windows > 2:
+                    if windows_num > 1:
+                        pos = [0, degrees[1], 0]
+                        cmds.xform( r=True, ro=(pos) )
+                        world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
                 if windows_num%2 == 1:
                     self.transform_window_to_back(world_pos[2])        
