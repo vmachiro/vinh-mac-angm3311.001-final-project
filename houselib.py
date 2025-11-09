@@ -193,6 +193,9 @@ class House():
     def get_height_of_house(self):
         return self.wall_height * self.number_of_floors
 
+    def get_curent_floor(self, floor_num):
+        return self.wall_height*(floor_num)
+
     def get_base_of_house(self):
         base_height = self.wall_height/self.get_height_of_house() * self.number_of_floors
         return base_height
@@ -226,7 +229,6 @@ class House():
                                             name = "window"+str(windows_num))
 
                 self.transform_window(xform)
-
                 world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
                 if windows_num%2 == 1:
@@ -234,7 +236,7 @@ class House():
                     world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
                 if floor_num > 0:
-                    pos = [world_pos[0], (world_pos[1]+(self.wall_height*(floor_num))), world_pos[2]]
+                    pos = [world_pos[0], (world_pos[1]+(self.get_curent_floor(floor_num))), world_pos[2]]
 
                     cmds.xform( xform, translation=pos ) 
                 
@@ -296,31 +298,21 @@ class House():
 
         cmds.xform(window, translation=pos)
 
-    def transform_step(self, step_name, step_num):
-        y_pos = self.get_step_rise() * step_num
-        z_pos = self.get_step_run() * step_num
-    
-        pos = [0, y_pos, z_pos]    
-        cmds.xform(step_name, translation=pos)
-
-    """def transform_window_up(self, window_y_pos, window_z_pos, xform):
-        y_pos = window_y_pos * floor_num
-        pos = [0, y_pos, window_z_pos]
-
-        cmds.xform( 0, y_pos, xform, pos=True )"""
-
-    """def transform_window_up(self, window_y_pos, floor_num, window):
-        if floor_num == 0:
-            return 
-        
-        y_pos = window_y_pos * floor_num * 1.5
-     
-        cmds.move( y_pos, window, y=True )"""
-
     def transform_window_to_back(self, window_z_pos):
         z_pos = window_z_pos*-1
 
         cmds.move( z_pos, z=True )
+
+    def rotate_window(self, xform, windows_num):
+        degrees = [0,90]
+
+        world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+
+        is_rotated = windows_num%2
+        world_pos[1] = degrees[is_rotated]
+        cmds.xform( r=True, ro=(world_pos) )
+
+        return is_rotated
 
     def transform_house(self, house_x_pos, house_num, housename):
         x_pos = house_x_pos + self.house_width*house_num*1.5
