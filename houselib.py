@@ -22,7 +22,7 @@ class HouseGenWin(QtWidgets.QDialog):
         super().__init__(parent=get_maya_main_win())
         self.houseGen = House()
         self.setWindowTitle("House Generator")
-        self.resize(800, 200)
+        self.resize(500, 200)
         self._mk_main_layout()
         self._connect_signals()
 
@@ -122,7 +122,7 @@ class HouseGenWin(QtWidgets.QDialog):
     def _add_windows(self):
         self.number_of_windows_spnbox = QtWidgets.QSpinBox()
         self.number_of_windows_spnbox.setValue(2)
-        self.form_layout.addRow("Window Number", self.number_of_windows_spnbox)
+        self.form_layout.addRow("Windows per floor", self.number_of_windows_spnbox)
 
     def _add_floors(self):
         self.number_of_floors_slider = QtWidgets.QSlider(Qt.Orientation.Horizontal, self)
@@ -231,17 +231,18 @@ class House():
 
                 if windows_num%2 == 1:
                     self.transform_window_to_back(world_pos[2])        
+                    world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
-                if windows_num > 1:
-                    # self.transform_window_up(world_pos[1], xform)     
-                    # y_pos = window_y_pos * floor_num
-                    pos = [world_pos[0], (world_pos[1]*((floor_num+1)*self.number_of_floors)), world_pos[2]]
+                if floor_num > 0:
+                    pos = [world_pos[0], (world_pos[1]+(self.wall_height*(floor_num))), world_pos[2]]
 
                     cmds.xform( xform, translation=pos ) 
                 
                 window_GRP.append(xform)  
             
-            return window_GRP
+            print(floor_num)
+
+        return window_GRP
             
     def mkdoors(self):
         door_GRP = []        
@@ -285,7 +286,6 @@ class House():
         pos = [0, y_pos, z_pos*-1]
 
         cmds.xform(door, translation=pos)
-
 
     def transform_window(self, window):
         z_pos = self.get_center_of_wall()
