@@ -233,7 +233,11 @@ class House():
                     self.transform_window_to_back(world_pos[2])        
 
                 if windows_num > 1:
-                        self.transform_window_up(world_pos[1], xform)      
+                    # self.transform_window_up(world_pos[1], xform)     
+                    # y_pos = window_y_pos * floor_num
+                    pos = [world_pos[0], (world_pos[1]*((floor_num+1)*self.number_of_floors)), world_pos[2]]
+
+                    cmds.xform( xform, translation=pos ) 
                 
                 window_GRP.append(xform)  
             
@@ -299,10 +303,11 @@ class House():
         pos = [0, y_pos, z_pos]    
         cmds.xform(step_name, translation=pos)
 
-    def transform_window_up(self, window_y_pos, xform):
-        y_pos = window_y_pos * self.number_of_floors
+    """def transform_window_up(self, window_y_pos, window_z_pos, xform):
+        y_pos = window_y_pos * floor_num
+        pos = [0, y_pos, window_z_pos]
 
-        cmds.xform( y_pos, xform, y=True )
+        cmds.xform( 0, y_pos, xform, pos=True )"""
 
     """def transform_window_up(self, window_y_pos, floor_num, window):
         if floor_num == 0:
