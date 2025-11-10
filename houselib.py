@@ -254,7 +254,7 @@ class House():
                     self.transform_window_up(floor_num, xform, world_pos) 
                 
                 window_GRP.append(xform)  
-            
+
         return window_GRP
 
     def transform_window_up(self, floor_num, xform, world_pos):
@@ -309,7 +309,6 @@ class House():
         cmds.xform(door, translation=pos)
 
     def transform_door_to_back(self, door):
-        
         z_pos = self.get_center_of_wall()
         y_pos = self.get_base_of_house()
         pos = [0, y_pos, z_pos*-1]
@@ -326,7 +325,7 @@ class House():
         house_things = []
 
         for house_num in range(self.number_of_houses):
-            house_name = self.housename+str(house_num) # non-static var allows parenting groups over a loop.
+            house_name = self.housename+str(house_num) 
 
             housebody = self.mkhousebody()
             house_things.append(housebody)
@@ -351,8 +350,6 @@ class House():
             cmds.makeIdentity(house_name, apply=True, translate=True, rotate=True, 
                             scale=True, normal=False, preserveNormals=True)
             
-
-
 
 if __name__ == "__main__":
     pass
