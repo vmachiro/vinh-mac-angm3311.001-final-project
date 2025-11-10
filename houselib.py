@@ -242,11 +242,8 @@ class House():
                         cmds.move( z_pos, z=True )
 
                         if windows_num%2 == 1:
-                            x_pos = x_pos*-1
-                            cmds.move( x_pos, x=True )
-
-                            z_pos = z_pos*-1
-                            cmds.move( z_pos, z=True )
+                            cmds.move( x_pos*-1, x=True )
+                            cmds.move( z_pos*-1, z=True )
                     
                     world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
