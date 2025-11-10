@@ -233,9 +233,8 @@ class House():
 
                 if self.number_of_windows > 2:
                     if windows_num > 1:
-                        rotate_pos = [0, 90, 0]
-                        cmds.xform( r=True, ro=(rotate_pos) )
-                        x_pos = world_pos[2]
+                        cmds.xform( r=True, ro=(0,90,0) )
+                        x_pos = world_pos[2] 
                         cmds.move( x_pos, x=True )
 
                         z_pos = world_pos[0]
