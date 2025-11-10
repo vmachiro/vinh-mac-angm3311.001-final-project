@@ -122,6 +122,7 @@ class HouseGenWin(QtWidgets.QDialog):
     def _add_windows(self):
         self.number_of_windows_spnbox = QtWidgets.QSpinBox()
         self.number_of_windows_spnbox.setValue(2)
+        self.number_of_windows_spnbox.setMaximum(4)
         self.form_layout.addRow("Windows per floor", self.number_of_windows_spnbox)
 
     def _add_floors(self):
@@ -234,17 +235,24 @@ class House():
                     if windows_num > 1:
                         rotate_pos = [0, 90, 0]
                         cmds.xform( r=True, ro=(rotate_pos) )
-                        
                         x_pos = world_pos[2]
                         cmds.move( x_pos, x=True )
-                        world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
+
+                        z_pos = world_pos[0]
+                        cmds.move( z_pos, z=True )
+
+                        if windows_num%2 == 1:
+                            x_pos = x_pos*-1
+                            cmds.move( x_pos, x=True )
+
+                            z_pos = z_pos*-1
+                            cmds.move( z_pos, z=True )
+                    
+                    world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
 
                 if windows_num%2 == 1:
                     self.transform_window_to_back(world_pos[2])        
                     world_pos = cmds.xform(xform, query=True, worldSpace=True, translation=True)
-
-                cmds.makeIdentity(xform, apply=True, translate=True, rotate=True, 
-                                    scale=True, normal=False, preserveNormals=True)
 
                 if floor_num > 0:
                     self.transform_window_up(floor_num, xform, world_pos) 
@@ -254,7 +262,7 @@ class House():
         return window_GRP
 
     def transform_window_up(self, floor_num, xform, world_pos):
-        pos = [0, (world_pos[1]+(self.get_curent_floor(floor_num))), 0]
+        pos = [world_pos[0], (world_pos[1]+(self.get_curent_floor(floor_num))), world_pos[2]]
         cmds.xform( xform, translation=pos )
 
     def transform_window(self, window):
